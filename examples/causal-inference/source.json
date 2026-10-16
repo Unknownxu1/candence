@@ -1,0 +1,66 @@
+{
+  "title": "试吃能否提升冰激淋购买率",
+  "brand": "冰激淋试吃实验",
+  "question": "虚构门店中，提供免费试吃与不提供试吃的购买率差异有多大？",
+  "nature": "simulation",
+  "hero": {
+    "chart": "treatment-effect",
+    "row": 0,
+    "label": "购买率差值 · 展示输入",
+    "signed": true,
+    "boundary": "完全虚构的展示数据，未开展真实试验，也不代表任何企业。",
+    "evidenceNote": "与无试吃对照组比较；区间为手工指定的展示测试值。"
+  },
+  "charts": [
+    {
+      "id": "treatment-effect",
+      "kind": "interval",
+      "title": "试吃方案的展示效应与不确定性",
+      "unit": "个百分点",
+      "intervalLabel": "95% CI",
+      "precision": 1,
+      "domain": [
+        -3,
+        10
+      ],
+      "reference": 0,
+      "note": "0 表示购买率无差异；输入区间不是由真实试验估计，分组区间不替代交互检验。",
+      "rows": [
+        {
+          "label": "全部虚构顾客",
+          "estimate": 3.6,
+          "low": 1.1,
+          "high": 6.1
+        },
+        {
+          "label": "首次试吃者",
+          "estimate": 4.3,
+          "low": 0.5,
+          "high": 8.1
+        },
+        {
+          "label": "熟悉口味者",
+          "estimate": 2.4,
+          "low": -1.5,
+          "high": 6.3
+        }
+      ]
+    }
+  ],
+  "methodSummary": "虚构冰激淋试吃场景；效应与区间为独立手工构造，只测试报告呈现，不是因果研究结果。",
+  "methods": [
+    {
+      "title": "数据来源与解释边界",
+      "paragraphs": [
+        "本示例没有企业数据、真实顾客或门店记录；数值仅用于界面测试。",
+        "真实随机试验应核对分组执行、SUTVA、缺失与依从性；观察研究还需可交换性与重叠等识别条件。图形不能自行建立因果。"
+      ]
+    },
+    {
+      "title": "复核方式",
+      "paragraphs": [
+        "图形与表格读取同目录 source.json。区间由输入提供，Skill 不自动推断显著性或计算因果效应。"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "source": "fresh actual browser screenshots of fictional ice-cream cases; collage uniformly scaled",
+  "files": {
+    "causal-inference-first.png": "d06116689bee405b69cba0acc8692d666c77a5a69eb8ec1c1f99cfea49b7baee",
+    "causal-inference-full.png": "5f6649add25e19a93d861b0d39009deee4b1d0a4f560a8c3384a272cd633ec08",
+    "causal-inference-mobile-first.png": "91e24ee6bc08a11d49352a426c9f068cd7224b1be56f91584523da8b62be6320",
+    "causal-inference-methods.png": "849b22686f337dd213a322d09fb4c1a4ca586cfcb04cd279ac3e1c9a23b161f9",
+    "causal-inference-fallback-first.png": "0175aebeb92586dbf809d63b060aa696b10ab785ab86a40377debdd92934124c",
+    "causal-inference-newspaper-first.png": "eeff7b79dc9259d237363b8dab92480160e089598e057f4fd68c20f85f195ddc",
+    "rank-logit-first.png": "a33b667e7ff886fb967190033a495a2a1ee120440cf602dcae5e55e29057154a",
+    "rank-logit-full.png": "c940dcf6e5919c9099d7d9fff3c83df18473c83c25bfc8b7d6dc3f7c17f148f8",
+    "rank-logit-mobile-first.png": "048ad8bf1eb66fff3a42108ca7899d4ea8c36b0f93023463b856ab5cbe101b4e",
+    "rank-logit-methods.png": "46f9cc2d4f8aa47050d097c0ba54fc06b163f40a8f102b40a9da80154cb93b09",
+    "rank-logit-fallback-first.png": "4b20ede44fda3c2aa1067a91eb437d570bcc20ef707e2408245b72285220a893",
+    "rank-logit-newspaper-first.png": "527ca03f0f8d9553b3166f89dba4d38e1abb32860da69965efc999e575031add",
+    "service-operations-first.png": "3cdd7f7c9076e5eda48f31c4530b884c1e48de55b9e266f15ac7c6fe3a4ca3b1",
+    "service-operations-full.png": "88b53bd149471313e3b3e5ab68324a96c0a35b1b4c5428f8d25c158f59d7ccc2",
+    "service-operations-mobile-first.png": "b958d26d05adb951e8450d7817de00b90b7c79103edef19e194cc5cf47a5b200",
+    "service-operations-methods.png": "5f306ccc6abe3d729a7e2e8e4f7db82dabb6a62c77ee6d10cc8bbe47b67e5332",
+    "service-operations-fallback-first.png": "5c8cf3817ccae4c5024dafb2a5293f7660dd797906e5724c18965e572c724226",
+    "service-operations-newspaper-first.png": "cca3e908989c4cea81e45e2a726ac79fc703fbe1a4dfbfb7cdc2a57b8da35812",
+    "single-file-first.png": "d06116689bee405b69cba0acc8692d666c77a5a69eb8ec1c1f99cfea49b7baee",
+    "relocated-service-first.png": "3cdd7f7c9076e5eda48f31c4530b884c1e48de55b9e266f15ac7c6fe3a4ca3b1",
+    "golden-first.png": "3cdd7f7c9076e5eda48f31c4530b884c1e48de55b9e266f15ac7c6fe3a4ca3b1",
+    "golden-mobile.png": "e24b84ce9b58ae4b47608adf9fc179b2ae5136629f44c982a8493c45d01947eb",
+    "three-scenarios.png": "7d818d4c5bcd49c4346096dbd4c4bf6f9400e582af95d4509df92c4579bd18fa"
+  }
+}

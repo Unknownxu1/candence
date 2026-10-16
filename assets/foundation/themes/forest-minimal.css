@@ -1,0 +1,37 @@
+/* Forest Minimal · surface-only configuration; geometry is shared. */
+:root[data-theme="forest-minimal"] {
+  --surface-page: #f1f4f1;
+  --surface-content: #fdfffd;
+  --surface-control: #e5ece6;
+  --surface-selected: #e9f2eb;
+  --surface-action-hover: #3a4b40;
+  --text-primary: #24302a;
+  --text-secondary: #5d6b62;
+  --text-subtle: #7e8c82;
+  --accent-primary: #287050;
+  --accent-strong: #205d43;
+  --border-default: #d8e1da;
+  --border-subtle: #e6ede7;
+  --border-strong: #afbeb2;
+  --border-badge: #c0cec3;
+  --border-meta: #b7c5ba;
+  --border-control: #c1cec4;
+  --chart-focus: #287050;
+  --chart-focus-label: #205d43;
+  --chart-context: #748078;
+  --chart-reference: #85948b;
+  --chart-grid: #e5ece7;
+  --chart-track: #d3dfd6;
+  --chart-label: #5d6b62;
+  --chart-surface: #fdfffd;
+  --nav-surface: rgba(248, 252, 249, 0.87);
+  --nav-solid: #f6faf6;
+  --nav-edge: rgba(253, 255, 253, 0.96);
+  --nav-reflection: #fdfffd;
+  --shadow-near: #253c2d05;
+  --shadow-far: #253c2d08;
+  --shadow-soft: #253c2d08;
+  --shadow-control: #253c2d13;
+  --shadow-popover: #253c2d12;
+  --text-inverse: #ffffff;
+}

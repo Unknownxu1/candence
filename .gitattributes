@@ -1,0 +1,14 @@
+# Preserve the exact bytes used by source and release SHA-256 manifests on every OS.
+* -text
+# Recognize preserved Windows line endings; check newly authored text normally.
+* whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Frozen upstream assets intentionally retain their original bytes and whitespace.
+assets/foundation/** -whitespace
+assets/report.css -whitespace
+examples/** -whitespace
+references/history/** -whitespace
+references/evidence/** -whitespace
+references/content-and-data-presentation.md -whitespace
+*.png binary
+*.woff2 binary
+*.pdf binary

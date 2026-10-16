@@ -1,0 +1,119 @@
+Cadence Source-Available License 1.0
+
+Free to use. Not for resale.
+
+DRAFT — PENDING COPYRIGHT HOLDER CONFIRMATION.
+This is a custom license draft, not a legally reviewed or validated instrument.
+The copyright holder must confirm ownership, complete the notice below, and
+approve adoption before this draft is represented as finalized licensing terms.
+Review by a qualified legal professional is recommended.
+
+Copyright (c) [YEAR(S) TO BE CONFIRMED] [COPYRIGHT HOLDER TO BE PROVIDED]
+
+1. Definitions and scope
+
+"Copyright Holder" means the person or entity entitled to license the applicable
+Cadence material. This license covers only material that the Copyright Holder
+has the right to license. Third-party materials remain under their own licenses.
+
+"Software" means the Cadence Agent Skill, instructions, design-system
+documentation, reusable components, themes, style packs, templates, scripts,
+and accompanying source code and assets, to the extent owned or licensable by
+the Copyright Holder. It does not include independently licensed third-party
+material or the user's data and independently authored report content.
+
+"Modified Version" means a copy or derivative of the Software made by changing,
+translating, adapting, renaming, or repackaging its protected material. Merely
+using Cadence to generate a report does not make that report a Modified Version
+for purposes of the resale restriction.
+
+"Outputs" means reports, HTML pages, visualizations, analyses, and other
+deliverables created using the Software for readers or clients. An Output may
+contain Software components needed to display, interact with, or distribute
+that deliverable. A reusable Skill, component library, theme or template pack,
+plugin, or repackaged Cadence product offered as software is not an Output
+merely because it was generated with Cadence or called a report.
+
+"Resale" means distributing or licensing the Software or a Modified Version
+as a standalone paid software product, in exchange for payment or other
+consideration for the software copy or license. This includes selling Cadence
+itself and selling renamed or repackaged versions as paid Skills, template
+packs, component packs, themes, or plugins. Charging for Outputs or Commercial
+Services as permitted below is not, by itself, Resale.
+
+"Commercial Services" means paid analysis, research, report creation,
+customization, consulting, training, maintenance, or technical support using
+the Software, where the service or Output is the deliverable rather than a
+standalone paid license or copy of the Software.
+
+2. Free permission
+
+Subject to these terms, permission is granted, without license fees, to any
+individual or organization to use, study, copy, fork, and modify the Software
+and to distribute original or Modified Versions without charging for the
+software copy or license. Personal, educational, research, and internal
+commercial use are expressly permitted. Ordinary enterprise use does not
+require separate commercial authorization or a paid license.
+
+When distributing Software or Modified Versions, retain this license and
+applicable copyright, attribution, and third-party license notices. Recipients
+must receive these terms for the covered Software; renaming or modifying it
+does not remove the resale restriction on that material. No source publication
+obligation is imposed by this license. Third-party obligations remain separate.
+
+3. Outputs and Commercial Services
+
+You may create, use, sell, license, and deliver Outputs, including commercial
+analytical reports and interactive HTML reports, and charge clients for
+Commercial Services. You may choose the terms for your own report content and
+data to the extent you have rights in them. The resale restriction does not
+automatically apply to Outputs or their content, and no Cadence royalty or
+separate commercial authorization is required solely for such activity.
+
+Software embedded in an Output for that Output's rendering or interaction may
+be delivered with the paid Output under this permission. Retain applicable
+Software and third-party notices, which may be in source comments, metadata,
+or accompanying files rather than a visible report badge. This exception does
+not authorize marketing the embedded Software as a separate paid reusable
+software product. No rights in client data or third-party content are granted.
+
+4. Restriction on Resale and separate authorization
+
+Without prior written authorization from the Copyright Holder, you may not
+engage in Resale of the Software or a Modified Version. Modifying, renaming,
+or repackaging the Software does not avoid this restriction.
+
+The Copyright Holder may grant separate written permission for commercial
+software distribution on terms agreed with the recipient. Such permission
+does not relicense third-party material or remove its obligations.
+
+5. Boundary cases
+
+This draft does not establish an additional blanket prohibition or paid-license
+requirement for paid SaaS hosting, mixed software bundles, membership downloads,
+or deliveries charging only technical-service fees. Their classification
+depends on whether the actual transaction is the standalone software Resale
+defined above or permitted use, Outputs, or Commercial Services. Ordinary
+report services remain expressly permitted. Unresolved cases are identified
+for owner and legal review in docs/licensing-review.md; recommendations there
+are not additional license restrictions.
+
+6. Third parties and names
+
+Separate licenses govern third-party code, fonts, and other materials, including
+the bundled SIL Open Font License fonts. Nothing in this license limits rights
+granted by those licenses or asserts ownership of third-party material. This
+license grants no trademark rights or permission to imply endorsement.
+
+7. Disclaimer and liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED
+"AS IS", WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+YOU ARE RESPONSIBLE FOR CHECKING YOUR ANALYSES, REPORTS, AND USE OF DATA.
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS WILL NOT BE LIABLE FOR CLAIMS, DAMAGES, OR OTHER LIABILITY,
+WHETHER IN CONTRACT, TORT, OR OTHERWISE, ARISING FROM THE SOFTWARE OR ITS USE.
+NOTHING HERE EXCLUDES LIABILITY OR RIGHTS THAT APPLICABLE LAW DOES NOT ALLOW
+TO BE EXCLUDED. THIS DRAFT DOES NOT SELECT A GOVERNING LAW OR JURISDICTION.

@@ -1,0 +1,37 @@
+/* Apple Classic · surface-only configuration; geometry is shared. */
+:root[data-theme="apple-classic"] {
+  --surface-page: #f5f5f7;
+  --surface-content: #ffffff;
+  --surface-control: #ededf0;
+  --surface-selected: #edf5ff;
+  --surface-action-hover: #3a3a3c;
+  --text-primary: #1d1d1f;
+  --text-secondary: #606068;
+  --text-subtle: #85858c;
+  --accent-primary: #0071e3;
+  --accent-strong: #005bb5;
+  --border-default: #dedee3;
+  --border-subtle: #ececf0;
+  --border-strong: #bcbcc4;
+  --border-badge: #c7c7ce;
+  --border-meta: #bdbdc4;
+  --border-control: #c9c9d0;
+  --chart-focus: #0071e3;
+  --chart-focus-label: #005bb5;
+  --chart-context: #707078;
+  --chart-reference: #8e8e96;
+  --chart-grid: #e9e9ee;
+  --chart-track: #d9d9df;
+  --chart-label: #606068;
+  --chart-surface: #ffffff;
+  --nav-surface: rgba(250, 250, 252, 0.83);
+  --nav-solid: #fafafc;
+  --nav-edge: rgba(255, 255, 255, 0.94);
+  --nav-reflection: #ffffff;
+  --shadow-near: #1d1d1f05;
+  --shadow-far: #1d1d1f08;
+  --shadow-soft: #00000008;
+  --shadow-control: #00000013;
+  --shadow-popover: #00000012;
+  --text-inverse: #ffffff;
+}

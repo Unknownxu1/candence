@@ -1,0 +1,8 @@
+/* Theme axis: color roles inherited from ../themes; no typography coupling. */
+:root[data-theme="graphite"] {
+ --hm-panel-radius:22px; --hm-nav-filter:blur(10px); --hm-panel-edge:#526b8826;
+ --nav-surface:rgba(248,250,253,.96); --hm-chart-line:2.2; --hm-chart-band:.1; --hm-chart-grid:.85; --hm-chart-minor:.75;
+ --hm-chart-reference:8 3 2 3; --hm-chart-marker:diamond; --hm-chart-marker-fill:var(--surface-content); --hm-chart-marker-radius:5;
+ --hm-decor-width:6px; --hm-decor-height:6px; --hm-decor-radius:0; --hm-decor-opacity:.7;
+ --state-estimate:#40566f; --state-uncertain:#756027; --state-neutral:#5c6674;
+}

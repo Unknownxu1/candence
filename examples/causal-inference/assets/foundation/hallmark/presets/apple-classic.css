@@ -1,0 +1,8 @@
+/* Theme axis: color roles inherited from ../themes; no typography coupling. */
+:root[data-theme="apple-classic"] {
+ --hm-panel-radius:28px; --hm-nav-filter:blur(18px) saturate(130%); --hm-panel-edge:transparent;
+ --hm-chart-line:3; --hm-chart-band:.13; --hm-chart-grid:1; --hm-chart-minor:0;
+ --hm-chart-reference:6 5; --hm-chart-marker:circle; --hm-chart-marker-fill:var(--chart-focus); --hm-chart-marker-radius:6;
+ --hm-decor-width:0px; --hm-decor-height:0px; --hm-decor-radius:0; --hm-decor-opacity:0;
+ --state-estimate:#005bb5; --state-uncertain:#75591f; --state-neutral:#606068;
+}

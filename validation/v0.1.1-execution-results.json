@@ -1,0 +1,175 @@
+{
+  "cases": {
+    "C": {
+      "mode": "standard",
+      "stages": [
+        {
+          "stage": "A",
+          "status": "passed",
+          "evidence": {
+            "passed": true,
+            "checks": [
+              "fictional source declared",
+              "flavor and weekly totals each 720",
+              "embedded payload equals source"
+            ]
+          }
+        },
+        {
+          "stage": "B",
+          "status": "passed"
+        },
+        {
+          "stage": "C",
+          "status": "automated-passed",
+          "humanReview": "pending"
+        }
+      ],
+      "initialStatus": "needs-visual-review",
+      "simulatedGateStatus": "complete",
+      "stoppedWithoutRerun": true,
+      "generationRuns": 1,
+      "screenshots": [
+        {
+          "file": "validation/v0.1.1/C-0.png",
+          "sha256": "88b53bd149471313e3b3e5ab68324a96c0a35b1b4c5428f8d25c158f59d7ccc2",
+          "width": 1440,
+          "height": 1000,
+          "selector": null
+        },
+        {
+          "file": "validation/v0.1.1/C-1.png",
+          "sha256": "e24b84ce9b58ae4b47608adf9fc179b2ae5136629f44c982a8493c45d01947eb",
+          "width": 390,
+          "height": 844,
+          "selector": null
+        }
+      ],
+      "corrections": 0,
+      "actualCompletion": {
+        "status": "complete",
+        "gates": {
+          "data": "passed",
+          "functional": "passed",
+          "visual": "passed",
+          "delivery": "passed"
+        },
+        "stop": true,
+        "corrections": 0,
+        "stoppedWithoutRerun": true,
+        "note": "Actual Agent review retained: final screenshot SHA-256 values exactly match the desktop/mobile images already viewed. No defects or extra aesthetic changes."
+      }
+    },
+    "A": {
+      "stages": [
+        {
+          "stage": "A",
+          "status": "reused",
+          "reason": "Verified data dependencies and bindings unchanged"
+        },
+        {
+          "stage": "B",
+          "status": "passed"
+        },
+        {
+          "stage": "C",
+          "status": "automated-passed",
+          "humanReview": "pending"
+        }
+      ],
+      "dataRuns": 0,
+      "generationRuns": 0,
+      "screenshots": [
+        {
+          "file": "validation/v0.1.1/A-0.png",
+          "sha256": "b96016ddb989e753b8b23decfba96bdaa741f9bae370948074f4511828206a39",
+          "width": 1440,
+          "height": 1000,
+          "selector": "#content > section:first-child .wrap"
+        }
+      ],
+      "skipped": [
+        "Inactive themes/style packs, printing and extra devices not requested; no full repository regression"
+      ],
+      "actualAgentVisualReview": "Inspected the local chart/table screenshot; readable and complete."
+    },
+    "B": {
+      "failureStages": [
+        {
+          "stage": "A",
+          "status": "passed",
+          "evidence": {
+            "passed": true,
+            "checks": [
+              "fictional source declared",
+              "flavor and weekly totals each 720",
+              "embedded payload equals source"
+            ]
+          }
+        },
+        {
+          "stage": "B",
+          "status": "failed"
+        }
+      ],
+      "blockers": [
+        "Empty data marks svg[data-chart]",
+        "pageerror: Controlled chart function reference failure"
+      ],
+      "screenshotsBeforeFix": 0,
+      "skipped": [
+        "C skipped: functional blocker detected before screenshots"
+      ],
+      "repairStages": [
+        {
+          "stage": "A",
+          "status": "passed",
+          "evidence": {
+            "passed": true,
+            "checks": [
+              "fictional source declared",
+              "flavor and weekly totals each 720",
+              "embedded payload equals source"
+            ]
+          }
+        },
+        {
+          "stage": "B",
+          "status": "passed"
+        },
+        {
+          "stage": "C",
+          "status": "automated-passed",
+          "humanReview": "pending"
+        }
+      ],
+      "screenshotsAfterFix": [
+        {
+          "file": "validation/v0.1.1/B-0.png",
+          "sha256": "b96016ddb989e753b8b23decfba96bdaa741f9bae370948074f4511828206a39",
+          "width": 1440,
+          "height": 1000,
+          "selector": "#content > section:first-child .wrap"
+        }
+      ],
+      "fullRegressionRun": false,
+      "actualAgentVisualReview": "Inspected the repaired chart/table screenshot; marks and values visible.",
+      "finalDiagnosticGuardVerified": true
+    }
+  },
+  "limits": [
+    "2 visual corrections maximum verified",
+    "empty defect list rejected",
+    "changed source invalidates A cache and blocks B/C",
+    "inactive themes not tested by report harness",
+    "Missing or tampered screenshot evidence invalidates fast-stop; intact evidence fast-stop verified"
+  ],
+  "screenshotsReviewedByTest": false,
+  "actualAgentVisualReview": true,
+  "finalHelperSmoke": {
+    "stableStyleCount": 1,
+    "popoverExplicitState": true,
+    "chartMarks": true,
+    "passed": true
+  }
+}

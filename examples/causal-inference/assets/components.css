@@ -1,0 +1,16 @@
+/* Thin reusable wiring around the extracted, validated report stylesheet. */
+.report-chart {display:block;width:100%;overflow:visible;}
+.report-plot {width:100%;}
+.hm-interval {fill:none;stroke:var(--chart-focus);stroke-width:2;}
+.hm-bar {fill:var(--chart-context);}
+.report-chart .selected-dot {fill:var(--chart-focus);stroke:var(--chart-focus);}
+.report-table {width:100%;border-collapse:collapse;font-size:14px;}
+.report-table th,.report-table td {padding:14px 12px;border-bottom:1px solid var(--border-default);text-align:right;white-space:nowrap;}
+.report-table th:first-child,.report-table td:first-child {text-align:left;}
+.report-table thead th {font-weight:500;color:var(--text-secondary);}
+.report-chart-note {font-size:14px;color:var(--text-secondary);line-height:1.8;margin-top:16px;}
+.report-methods .disclosure p+p {margin-top:12px;}
+:root[data-style-pack="pixel"] .hm-interval {stroke-width:2;stroke-linecap:square;}
+:root[data-style-pack="cel"] .hm-interval {stroke-width:3.5;stroke-linecap:round;}
+:root[data-style-pack="newspaper"] .hm-interval {stroke-width:1.8;}
+@media(max-width:640px){.report-table {font-size:13px;}.insight-result h2 {overflow-wrap:anywhere;}}

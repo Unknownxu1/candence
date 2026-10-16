@@ -1,0 +1,37 @@
+/* Warm Editorial · surface-only configuration; geometry is shared. */
+:root[data-theme="warm-editorial"] {
+  --surface-page: #f7f3ee;
+  --surface-content: #fffdfa;
+  --surface-control: #eee7df;
+  --surface-selected: #faeee6;
+  --surface-action-hover: #4b4038;
+  --text-primary: #302a26;
+  --text-secondary: #6d6158;
+  --text-subtle: #8b7e73;
+  --accent-primary: #b35432;
+  --accent-strong: #934228;
+  --border-default: #e3dbd2;
+  --border-subtle: #eee7df;
+  --border-strong: #bdb0a4;
+  --border-badge: #d0c4b9;
+  --border-meta: #c1b3a6;
+  --border-control: #cdbfb3;
+  --chart-focus: #b35432;
+  --chart-focus-label: #934228;
+  --chart-context: #82766d;
+  --chart-reference: #96877c;
+  --chart-grid: #eee5dc;
+  --chart-track: #dfd4c9;
+  --chart-label: #6d6158;
+  --chart-surface: #fffdfa;
+  --nav-surface: rgba(255, 251, 246, 0.87);
+  --nav-solid: #fcf8f2;
+  --nav-edge: rgba(255, 253, 248, 0.96);
+  --nav-reflection: #fffdf9;
+  --shadow-near: #44301f05;
+  --shadow-far: #44301f08;
+  --shadow-soft: #44301f08;
+  --shadow-control: #44301f13;
+  --shadow-popover: #44301f12;
+  --text-inverse: #ffffff;
+}

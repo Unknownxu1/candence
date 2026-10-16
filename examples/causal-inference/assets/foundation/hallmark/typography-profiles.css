@@ -1,0 +1,59 @@
+/* Independent type axis. No color or surface declarations belong here. */
+:root {
+ --font-latin: -apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
+ --font-cjk: "PingFang SC","Microsoft YaHei","Hallmark Sans SC",sans-serif;
+ --font-numerals: -apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
+ --font-display: var(--font-latin),var(--font-cjk);
+ --font-heading: var(--font-latin),var(--font-cjk);
+ --font-reading: var(--font-latin),var(--font-cjk);
+ --font-caption: var(--font-reading);
+ --type-display-weight:650; --type-heading-weight:600; --type-body-weight:400;
+ --type-display-size:4rem; --type-display-leading:5rem; --type-heading-leading:1.25;
+ --type-body-leading:1.8; --type-heading-tracking:0; --type-caption-tracking:0;
+ --type-number-weight:600; --type-number-tracking:0;
+}
+:root[data-typography="editorial"] {
+ --font-latin: "Segoe UI",Arial;
+ --font-cjk: "PingFang SC","Microsoft YaHei","Hallmark Sans SC",sans-serif;
+ --font-display: Georgia,"Hallmark Serif SC","Noto Serif SC","Noto Serif CJK SC","Songti SC",SimSun,serif;
+ --font-heading: var(--font-display);
+ --type-display-weight:550; --type-heading-weight:600; --type-body-weight:400;
+ --type-display-size:3.875rem; --type-heading-leading:1.3;
+ --type-body-leading:1.82; --type-heading-tracking:.015em;
+ --type-caption-tracking:.01em; --type-number-weight:500;
+}
+:root[data-typography="humanist"] {
+ --font-latin: "Trebuchet MS","Segoe UI";
+ --font-cjk: "Hallmark Sans SC","Noto Sans SC","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+ --font-numerals: "Trebuchet MS","Segoe UI";
+ --font-display: var(--font-latin),var(--font-cjk);
+ --font-heading: var(--font-display); --font-reading: var(--font-display);
+ --type-display-weight:550; --type-heading-weight:550;
+ --type-display-size:3.875rem; --type-heading-leading:1.3;
+ --type-body-leading:1.82; --type-number-weight:600;
+}
+:root[data-typography="technical"] {
+ --font-latin: "Segoe UI",Arial;
+ --font-cjk: "Hallmark Sans SC","Noto Sans SC","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+ --font-numerals: "SFMono-Regular",Consolas,"Liberation Mono";
+ --font-display: var(--font-latin),var(--font-cjk);
+ --font-heading: var(--font-display); --font-reading: var(--font-display);
+ --type-display-weight:600; --type-heading-weight:600;
+ --type-display-size:3.875rem; --type-heading-leading:1.25;
+ --type-body-leading:1.8; --type-caption-tracking:.015em;
+ --type-number-weight:500; --type-number-tracking:-.025em;
+}
+/* Fixed display line box preserves the approved two-line composition. */
+body {font-family:var(--font-reading);font-weight:var(--type-body-weight);line-height:var(--type-body-leading);}
+h1,h2,h3 {font-family:var(--font-heading);font-weight:var(--type-heading-weight);letter-spacing:var(--type-heading-tracking);line-height:var(--type-heading-leading);}
+.hero-heading h1 {font-family:var(--font-display);font-weight:var(--type-display-weight);font-size:var(--type-display-size);line-height:var(--type-display-leading);}
+/* Body text and UI remain sans even in Editorial. Units do not inherit monospace. */
+.insight-result h2,.chart-heading h2,.insight-chart-heading h3,.findings-list h3,.model-interpretation h3,.definition-grid dt,.limits h3 {font-family:var(--font-reading);letter-spacing:0;}
+.num,td,.chart-axis,.insight-point-heading strong {font-family:var(--font-numerals),var(--font-cjk);font-variant-numeric:tabular-nums lining-nums;font-feature-settings:"tnum" 1,"lnum" 1;letter-spacing:var(--type-number-tracking);}
+.insight-number,.insight-point-heading strong {font-weight:var(--type-number-weight);}
+.insight-unit,.insight-point-heading small {font-family:var(--font-reading);letter-spacing:0;font-weight:400;}
+.eyebrow {font-family:var(--font-reading);letter-spacing:.035em;}
+.chart-caption,.insight-evidence figcaption,.hero-meta,.table-note {font-family:var(--font-caption);letter-spacing:var(--type-caption-tracking);}
+.nav,.design-controls {font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;letter-spacing:0;}
+@media(max-width:640px){:root {--type-display-size:2.375rem;--type-display-leading:3rem;} :root[data-typography="editorial"],:root[data-typography="humanist"],:root[data-typography="technical"]{--type-display-size:2.3125rem;}}
+@media print{.hero-heading h1 {font-size:var(--type-heading-mobile);line-height:1.3;} body {line-height:1.65;}}

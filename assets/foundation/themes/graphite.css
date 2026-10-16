@@ -1,0 +1,37 @@
+/* Graphite · surface-only configuration; geometry is shared. */
+:root[data-theme="graphite"] {
+  --surface-page: #f0f2f5;
+  --surface-content: #fcfdff;
+  --surface-control: #e3e8ef;
+  --surface-selected: #e9eff6;
+  --surface-action-hover: #3e4958;
+  --text-primary: #252c36;
+  --text-secondary: #5c6674;
+  --text-subtle: #7d8795;
+  --accent-primary: #526b88;
+  --accent-strong: #40566f;
+  --border-default: #d6dde6;
+  --border-subtle: #e5eaf0;
+  --border-strong: #aeb8c5;
+  --border-badge: #bfc9d6;
+  --border-meta: #b6c1ce;
+  --border-control: #c0cad7;
+  --chart-focus: #40566f;
+  --chart-focus-label: #40566f;
+  --chart-context: #788392;
+  --chart-reference: #8792a1;
+  --chart-grid: #e4e9f0;
+  --chart-track: #d2dbe6;
+  --chart-label: #5c6674;
+  --chart-surface: #fcfdff;
+  --nav-surface: rgba(246, 248, 252, 0.87);
+  --nav-solid: #f6f8fc;
+  --nav-edge: rgba(252, 253, 255, 0.96);
+  --nav-reflection: #fcfdff;
+  --shadow-near: #25304405;
+  --shadow-far: #25304408;
+  --shadow-soft: #25304408;
+  --shadow-control: #25304413;
+  --shadow-popover: #25304412;
+  --text-inverse: #ffffff;
+}

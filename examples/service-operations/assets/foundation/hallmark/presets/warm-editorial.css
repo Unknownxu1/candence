@@ -1,0 +1,8 @@
+/* Theme axis: color roles inherited from ../themes; no typography coupling. */
+:root[data-theme="warm-editorial"] {
+ --hm-panel-radius:25px; --hm-nav-filter:blur(12px) saturate(108%); --hm-panel-edge:#b8a59122;
+ --nav-surface:rgba(255,251,246,.94); --hm-chart-line:2.5; --hm-chart-band:.105; --hm-chart-grid:.8; --hm-chart-minor:0;
+ --hm-chart-reference:9 5; --hm-chart-marker:circle; --hm-chart-marker-fill:var(--surface-content); --hm-chart-marker-radius:5;
+ --hm-decor-width:24px; --hm-decor-height:1px; --hm-decor-radius:0; --hm-decor-opacity:.7;
+ --state-estimate:#934228; --state-uncertain:#826224; --state-neutral:#6d6158;
+}

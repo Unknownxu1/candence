@@ -1,0 +1,22 @@
+[
+  {
+    "family": "Hallmark Sans SC",
+    "derivedFrom": "Noto Sans SC",
+    "officialSource": "https://github.com/google/fonts/tree/main/ofl/notosanssc",
+    "originalSha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+    "subsetSha256": "d50931df3268f20216c95eaef3503936645f2a51c9f88c321b1f15bf25be64ff",
+    "bytes": 150780,
+    "characters": 627,
+    "license": "OFL-sans.txt"
+  },
+  {
+    "family": "Hallmark Serif SC",
+    "derivedFrom": "Noto Serif SC",
+    "officialSource": "https://github.com/google/fonts/tree/main/ofl/notoserifsc",
+    "originalSha256": "050080d9255a86808f2945bffac582b31ef32bc36411ce29563b4961670c66f9",
+    "subsetSha256": "d61dad97a0d3f3da062f5150e456cfb62f974a7e1c31cb2627376821281ad0ef",
+    "bytes": 196180,
+    "characters": 627,
+    "license": "OFL-serif.txt"
+  }
+]

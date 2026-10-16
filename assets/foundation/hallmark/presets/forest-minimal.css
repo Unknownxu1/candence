@@ -1,0 +1,8 @@
+/* Theme axis: color roles inherited from ../themes; no typography coupling. */
+:root[data-theme="forest-minimal"] {
+ --hm-panel-radius:30px; --hm-nav-filter:blur(14px) saturate(110%); --hm-panel-edge:transparent;
+ --nav-surface:rgba(247,251,247,.92); --hm-chart-line:3.2; --hm-chart-band:.09; --hm-chart-grid:.75; --hm-chart-minor:0;
+ --hm-chart-reference:2 5; --hm-chart-marker:circle; --hm-chart-marker-fill:var(--chart-focus); --hm-chart-marker-radius:5;
+ --hm-decor-width:15px; --hm-decor-height:6px; --hm-decor-radius:50%; --hm-decor-opacity:.55;
+ --state-estimate:#205d43; --state-uncertain:#746025; --state-neutral:#5d6b62;
+}

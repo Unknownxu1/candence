@@ -1,0 +1,608 @@
+[
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/components.css",
+    "artifactSha256": "65a1a2d03c09979598a260235d48bb0e7917f1add25dfe7fb4207524a8494b09",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/design-tokens.css",
+    "artifactSha256": "f8a86122ab8f3241ef6b6326d1f59003e0ee41594837582317c8cec1d860b359",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/chart-styles.css",
+    "artifactSha256": "fa613bc0366bbdde2cfe00f2e26e1d75ae993d6a5b2f547ad2bf9f12c701be1b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/decorative-elements.css",
+    "artifactSha256": "cae6cf67997ce407715174c504641aea5bb10cbf46c8f670979212649d9c6b0e",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/fonts/font-faces.css",
+    "artifactSha256": "2f1372f44ccb406f4449b9e538903d3ca30a8a7165133bd22a7181e8d52b7ee1",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/fonts/font-provenance.json",
+    "artifactSha256": "a5883818b933477dae018a9fbfea6816d3a0de1242e219edb49f34b42cd5e08b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/fonts/hallmark-sans-sc.woff2",
+    "artifactSha256": "d50931df3268f20216c95eaef3503936645f2a51c9f88c321b1f15bf25be64ff",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/fonts/hallmark-serif-sc.woff2",
+    "artifactSha256": "d61dad97a0d3f3da062f5150e456cfb62f974a7e1c31cb2627376821281ad0ef",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/fonts/OFL-sans.txt",
+    "artifactSha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/fonts/OFL-serif.txt",
+    "artifactSha256": "5e0da210fb04058a8c0087985d2d456b931c2579811a49655721d3cf0c36b6d6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/lab-controls.css",
+    "artifactSha256": "23e50d86eb151fa279641495123117cf5571caf40560bde73c18e3483b5c055b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/presets/apple-classic.css",
+    "artifactSha256": "bf681912254185a6981d8e507057073011c198c7f3abbdd899c2091ccf32f516",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/presets/forest-minimal.css",
+    "artifactSha256": "959c38b3e8fa3adc1461fb9cfdb927a5931f920ebc888caf54667c3b6d072756",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/presets/graphite.css",
+    "artifactSha256": "fb783f77895fcf20bd2fbb02b2cfa071fc00553c83fed0f13a1990292c6536a3",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/presets/warm-editorial.css",
+    "artifactSha256": "5578992310e897354fea77c6e8394a69bea8fe84369ce2cffafc73baf4d55caf",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/hallmark/typography-profiles.css",
+    "artifactSha256": "8de0d9a85323667478627bb2673cc075c8278de7ef4771c9c48152dae0d21f31",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/style-pack-cel.css",
+    "artifactSha256": "3d67e767af4295fc3b2ee5dfcf6fcab6fcc37906a524273027e0a4501177dd8c",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/style-pack-newspaper.css",
+    "artifactSha256": "119bc43c8b6df131015341a229b950a4537787b25b579b60af7261188b781828",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/style-pack-pixel.css",
+    "artifactSha256": "4e57c9d05cb195226ca30984a65b746c5f6add1e2de412e0cdf0bba4414c306b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/style-pack-sunset.css",
+    "artifactSha256": "5879dabc12215f026111f9d65f7a8be79a6cb01bb8d151f43ab61fdde0350ba3",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/style-pack-tokens.css",
+    "artifactSha256": "51a6fda28ee7e607f45c94053e87277b0e3cf5f69c6d992cceb350deafa9802d",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/themes/apple-classic.css",
+    "artifactSha256": "fa859cbe384ad9e1bf2b546f5d22242f7a779cb5642d76e052f1829378072395",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/themes/forest-minimal.css",
+    "artifactSha256": "ae44d114a6b39662ccf4c2c3a08359f593cdc344a51b5ac61cf16203465f6870",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/themes/graphite.css",
+    "artifactSha256": "04526442a7a81554d40eb8f4add4ef87ce264a6e8502c82125ee19dc6ae3e7a6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/foundation/themes/warm-editorial.css",
+    "artifactSha256": "33ed4e5d4fba628ac398438b5453f83ee3aa0b174b8df7d7058ce34ffa737002",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/report.css",
+    "artifactSha256": "7c0d1fd6ea2358251ae480bf5686535423fe9a89b53ed4c09174cd4751821795",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/runtime/charts.js",
+    "artifactSha256": "7f86c04f46b41c5568fa061d6b35e83fff3f5d6d2d88b1fd53140a1804bcf0bc",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/runtime/design-controls.js",
+    "artifactSha256": "1b9e46d51b78369fc28d07e683967be880ad60e5bc38e1c18062f4e4cb4cfdd6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "assets/runtime/report.js",
+    "artifactSha256": "97580d91dd886829289135888db7638e4fe9973787419fbd7289babeffffe8d9",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/components.css",
+    "artifactSha256": "65a1a2d03c09979598a260235d48bb0e7917f1add25dfe7fb4207524a8494b09",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/design-tokens.css",
+    "artifactSha256": "f8a86122ab8f3241ef6b6326d1f59003e0ee41594837582317c8cec1d860b359",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/chart-styles.css",
+    "artifactSha256": "fa613bc0366bbdde2cfe00f2e26e1d75ae993d6a5b2f547ad2bf9f12c701be1b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/decorative-elements.css",
+    "artifactSha256": "cae6cf67997ce407715174c504641aea5bb10cbf46c8f670979212649d9c6b0e",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/fonts/font-faces.css",
+    "artifactSha256": "2f1372f44ccb406f4449b9e538903d3ca30a8a7165133bd22a7181e8d52b7ee1",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/fonts/font-provenance.json",
+    "artifactSha256": "a5883818b933477dae018a9fbfea6816d3a0de1242e219edb49f34b42cd5e08b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/fonts/hallmark-sans-sc.woff2",
+    "artifactSha256": "d50931df3268f20216c95eaef3503936645f2a51c9f88c321b1f15bf25be64ff",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/fonts/hallmark-serif-sc.woff2",
+    "artifactSha256": "d61dad97a0d3f3da062f5150e456cfb62f974a7e1c31cb2627376821281ad0ef",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/fonts/OFL-sans.txt",
+    "artifactSha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/fonts/OFL-serif.txt",
+    "artifactSha256": "5e0da210fb04058a8c0087985d2d456b931c2579811a49655721d3cf0c36b6d6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/lab-controls.css",
+    "artifactSha256": "23e50d86eb151fa279641495123117cf5571caf40560bde73c18e3483b5c055b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/presets/apple-classic.css",
+    "artifactSha256": "bf681912254185a6981d8e507057073011c198c7f3abbdd899c2091ccf32f516",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/presets/forest-minimal.css",
+    "artifactSha256": "959c38b3e8fa3adc1461fb9cfdb927a5931f920ebc888caf54667c3b6d072756",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/presets/graphite.css",
+    "artifactSha256": "fb783f77895fcf20bd2fbb02b2cfa071fc00553c83fed0f13a1990292c6536a3",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/presets/warm-editorial.css",
+    "artifactSha256": "5578992310e897354fea77c6e8394a69bea8fe84369ce2cffafc73baf4d55caf",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/hallmark/typography-profiles.css",
+    "artifactSha256": "8de0d9a85323667478627bb2673cc075c8278de7ef4771c9c48152dae0d21f31",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/style-pack-cel.css",
+    "artifactSha256": "3d67e767af4295fc3b2ee5dfcf6fcab6fcc37906a524273027e0a4501177dd8c",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/style-pack-newspaper.css",
+    "artifactSha256": "119bc43c8b6df131015341a229b950a4537787b25b579b60af7261188b781828",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/style-pack-pixel.css",
+    "artifactSha256": "4e57c9d05cb195226ca30984a65b746c5f6add1e2de412e0cdf0bba4414c306b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/style-pack-sunset.css",
+    "artifactSha256": "5879dabc12215f026111f9d65f7a8be79a6cb01bb8d151f43ab61fdde0350ba3",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/style-pack-tokens.css",
+    "artifactSha256": "51a6fda28ee7e607f45c94053e87277b0e3cf5f69c6d992cceb350deafa9802d",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/themes/apple-classic.css",
+    "artifactSha256": "fa859cbe384ad9e1bf2b546f5d22242f7a779cb5642d76e052f1829378072395",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/themes/forest-minimal.css",
+    "artifactSha256": "ae44d114a6b39662ccf4c2c3a08359f593cdc344a51b5ac61cf16203465f6870",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/themes/graphite.css",
+    "artifactSha256": "04526442a7a81554d40eb8f4add4ef87ce264a6e8502c82125ee19dc6ae3e7a6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/foundation/themes/warm-editorial.css",
+    "artifactSha256": "33ed4e5d4fba628ac398438b5453f83ee3aa0b174b8df7d7058ce34ffa737002",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/report.css",
+    "artifactSha256": "7c0d1fd6ea2358251ae480bf5686535423fe9a89b53ed4c09174cd4751821795",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/runtime/charts.js",
+    "artifactSha256": "7f86c04f46b41c5568fa061d6b35e83fff3f5d6d2d88b1fd53140a1804bcf0bc",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/runtime/design-controls.js",
+    "artifactSha256": "1b9e46d51b78369fc28d07e683967be880ad60e5bc38e1c18062f4e4cb4cfdd6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/assets/runtime/report.js",
+    "artifactSha256": "97580d91dd886829289135888db7638e4fe9973787419fbd7289babeffffe8d9",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/index.html",
+    "artifactSha256": "11a71f166474112366e8bf68087a0d99cc256a4c0c7f8bc39ff7f0340ff62ce5",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/source.json",
+    "artifactSha256": "a80eb152741c32fc5607d51c4bcc098e84023ce3e182c6706f6eeb07908809a5",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/causal-inference/standalone.html",
+    "artifactSha256": "2232e1d4ccfbc153e324e02c9529914569e4466ecb22a59c4106dbedf8f45051",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/golden-first.html",
+    "artifactSha256": "a4be0c7354da4ecbb2cd43a6c1db75b383eba3d860194b320f344e8ac91ebc4d",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/golden-source.json",
+    "artifactSha256": "24741011b5a7c9a132f569be54722bb7e46ca568ea587a11cdfbb75aa450999b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/rank-logit/case/base-controller.js",
+    "artifactSha256": "e667b7b4e46a24f7e3689af2b57d9f3f643e0b9f7c39a2f9dec897af45e88d2e",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/rank-logit/case/style-controller.js",
+    "artifactSha256": "5500de555599ad65045707bd07ced78c8e6aa78246d955634eaab1b2326be843",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/rank-logit/data/analysis.json",
+    "artifactSha256": "1c83ec104829d4d6b5c4b77cfab7c6043070699282d5fdacf00f973c928d6fb1",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/rank-logit/data/simulate_and_fit.py",
+    "artifactSha256": "e214a05f8066cf8f0e5c22d96c8f5673fae97c2d3f833d00f34910c1e1a45880",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/rank-logit/data/simulated-rankings.csv",
+    "artifactSha256": "669702106230461141c27a726dcaf2bf34076c2659666548f54ac71954e036e6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/rank-logit/index.html",
+    "artifactSha256": "6e8caf6243a4977438694f346e63cd7738389a06cb0f0b0890d6c487ea61fd6c",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/rank-logit/stable-v3.html",
+    "artifactSha256": "581c360d875ac09cb4867ad805fb8f72917e0402b2d42113571e9bbb9e135e38",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/components.css",
+    "artifactSha256": "65a1a2d03c09979598a260235d48bb0e7917f1add25dfe7fb4207524a8494b09",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/design-tokens.css",
+    "artifactSha256": "f8a86122ab8f3241ef6b6326d1f59003e0ee41594837582317c8cec1d860b359",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/chart-styles.css",
+    "artifactSha256": "fa613bc0366bbdde2cfe00f2e26e1d75ae993d6a5b2f547ad2bf9f12c701be1b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/decorative-elements.css",
+    "artifactSha256": "cae6cf67997ce407715174c504641aea5bb10cbf46c8f670979212649d9c6b0e",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/fonts/font-faces.css",
+    "artifactSha256": "2f1372f44ccb406f4449b9e538903d3ca30a8a7165133bd22a7181e8d52b7ee1",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/fonts/font-provenance.json",
+    "artifactSha256": "a5883818b933477dae018a9fbfea6816d3a0de1242e219edb49f34b42cd5e08b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/fonts/hallmark-sans-sc.woff2",
+    "artifactSha256": "d50931df3268f20216c95eaef3503936645f2a51c9f88c321b1f15bf25be64ff",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/fonts/hallmark-serif-sc.woff2",
+    "artifactSha256": "d61dad97a0d3f3da062f5150e456cfb62f974a7e1c31cb2627376821281ad0ef",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/fonts/OFL-sans.txt",
+    "artifactSha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/fonts/OFL-serif.txt",
+    "artifactSha256": "5e0da210fb04058a8c0087985d2d456b931c2579811a49655721d3cf0c36b6d6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/lab-controls.css",
+    "artifactSha256": "23e50d86eb151fa279641495123117cf5571caf40560bde73c18e3483b5c055b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/presets/apple-classic.css",
+    "artifactSha256": "bf681912254185a6981d8e507057073011c198c7f3abbdd899c2091ccf32f516",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/presets/forest-minimal.css",
+    "artifactSha256": "959c38b3e8fa3adc1461fb9cfdb927a5931f920ebc888caf54667c3b6d072756",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/presets/graphite.css",
+    "artifactSha256": "fb783f77895fcf20bd2fbb02b2cfa071fc00553c83fed0f13a1990292c6536a3",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/presets/warm-editorial.css",
+    "artifactSha256": "5578992310e897354fea77c6e8394a69bea8fe84369ce2cffafc73baf4d55caf",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/hallmark/typography-profiles.css",
+    "artifactSha256": "8de0d9a85323667478627bb2673cc075c8278de7ef4771c9c48152dae0d21f31",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/style-pack-cel.css",
+    "artifactSha256": "3d67e767af4295fc3b2ee5dfcf6fcab6fcc37906a524273027e0a4501177dd8c",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/style-pack-newspaper.css",
+    "artifactSha256": "119bc43c8b6df131015341a229b950a4537787b25b579b60af7261188b781828",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/style-pack-pixel.css",
+    "artifactSha256": "4e57c9d05cb195226ca30984a65b746c5f6add1e2de412e0cdf0bba4414c306b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/style-pack-sunset.css",
+    "artifactSha256": "5879dabc12215f026111f9d65f7a8be79a6cb01bb8d151f43ab61fdde0350ba3",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/style-pack-tokens.css",
+    "artifactSha256": "51a6fda28ee7e607f45c94053e87277b0e3cf5f69c6d992cceb350deafa9802d",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/themes/apple-classic.css",
+    "artifactSha256": "fa859cbe384ad9e1bf2b546f5d22242f7a779cb5642d76e052f1829378072395",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/themes/forest-minimal.css",
+    "artifactSha256": "ae44d114a6b39662ccf4c2c3a08359f593cdc344a51b5ac61cf16203465f6870",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/themes/graphite.css",
+    "artifactSha256": "04526442a7a81554d40eb8f4add4ef87ce264a6e8502c82125ee19dc6ae3e7a6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/foundation/themes/warm-editorial.css",
+    "artifactSha256": "33ed4e5d4fba628ac398438b5453f83ee3aa0b174b8df7d7058ce34ffa737002",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/report.css",
+    "artifactSha256": "7c0d1fd6ea2358251ae480bf5686535423fe9a89b53ed4c09174cd4751821795",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/runtime/charts.js",
+    "artifactSha256": "7f86c04f46b41c5568fa061d6b35e83fff3f5d6d2d88b1fd53140a1804bcf0bc",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/runtime/design-controls.js",
+    "artifactSha256": "1b9e46d51b78369fc28d07e683967be880ad60e5bc38e1c18062f4e4cb4cfdd6",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/assets/runtime/report.js",
+    "artifactSha256": "97580d91dd886829289135888db7638e4fe9973787419fbd7289babeffffe8d9",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/index.html",
+    "artifactSha256": "30d09b22674cd9f75ca925f673854aef0ca6ba6f7907db916c6d64e8d8b94278",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence asset or synthetic example",
+    "destination": "examples/service-operations/source.json",
+    "artifactSha256": "24741011b5a7c9a132f569be54722bb7e46ca568ea587a11cdfbb75aa450999b",
+    "status": "artifact integrity record"
+  }
+]

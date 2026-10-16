@@ -1,0 +1,13 @@
+/* Optional, nonsemantic marks. No content, gradients, texture images or icons. */
+.section-heading .eyebrow,.editorial-findings .eyebrow {display:flex;align-items:center;gap:var(--space-10);}
+.section-heading .eyebrow::before,.editorial-findings .eyebrow::before {content:"";display:block;flex:none;width:var(--hm-decor-width);height:var(--hm-decor-height);border:1px solid var(--accent-strong);border-radius:var(--hm-decor-radius);opacity:var(--hm-decor-opacity);}
+:root[data-theme="apple-classic"] .section-heading .eyebrow::before,:root[data-theme="apple-classic"] .editorial-findings .eyebrow::before {display:none;}
+/* Material changes preserve padding, shared grid and information hierarchy. */
+.insight-panel,.chart-surface,.uncertainty-canvas {border-radius:var(--hm-panel-radius);box-shadow:inset 0 0 0 1px var(--hm-panel-edge);}
+.nav {backdrop-filter:var(--hm-nav-filter);-webkit-backdrop-filter:var(--hm-nav-filter);}
+.findings-list article:nth-child(2) h3 {text-decoration:underline;text-decoration-color:var(--state-uncertain);text-decoration-thickness:1px;text-underline-offset:6px;}
+@media print{.section-heading .eyebrow::before,.editorial-findings .eyebrow::before {display:none;}}
+
+.insight-ci,.method-boundary {color:var(--state-neutral);}
+.insight-point:last-child .insight-point-heading {color:var(--state-estimate);}
+.limits h3 {color:var(--state-uncertain);}

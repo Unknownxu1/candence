@@ -1,0 +1,13 @@
+{
+  "skillFrontmatterReadable": true,
+  "isolatedInstallAndDiscoveryScan": true,
+  "hostAgentAutomaticInvocationTested": false,
+  "installedReferencesResolvable": true,
+  "rejectOverwrite": true,
+  "relocatableBundle": true,
+  "statisticalInputRejections": 3,
+  "localAssetLinks": 84,
+  "sourceManifestExact": true,
+  "threeFixturesAvailable": true,
+  "fontLicensesPresent": true
+}

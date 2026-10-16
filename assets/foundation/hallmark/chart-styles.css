@@ -1,0 +1,11 @@
+/* Same model, axes and interval geometry; theme owns only visual treatment. */
+.curve-focus {stroke-width:var(--hm-chart-line);}
+.band {opacity:var(--hm-chart-band);}
+.chart-grid {stroke-width:var(--hm-chart-grid);}
+.minor-grid {stroke:var(--chart-grid);stroke-width:.65;opacity:var(--hm-chart-minor);}
+.reference-line,.key-reference line {stroke-dasharray:var(--hm-chart-reference);}
+.selected-dot {fill:var(--hm-chart-marker-fill);stroke:var(--chart-focus);stroke-width:2.5;}
+.key-line {border-top-width:calc(var(--hm-chart-line) * 1px);}
+.key-band {opacity:var(--hm-chart-band);background:var(--chart-focus);}
+.chart-axis {font-family:var(--font-numerals),var(--font-cjk);}
+.probability-fill {border-radius:var(--hm-panel-radius);}

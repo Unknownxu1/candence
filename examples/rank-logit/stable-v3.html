@@ -1,0 +1,2209 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="apple-classic">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>时间间隔与口味排序 · Editorial V3</title>
+    <meta
+      name="description"
+      content="使用实际拟合的模拟排序数据，分析事件间隔与预期排名百分位；Apple Visual Foundation 跨报告迁移验证。"
+    />
+    <link rel="stylesheet" href="../../assets/foundation/design-tokens.css" />
+    <link rel="stylesheet" href="../../assets/foundation/themes/apple-classic.css" />
+    <link rel="stylesheet" href="../../assets/foundation/themes/warm-editorial.css" />
+    <link rel="stylesheet" href="../../assets/foundation/themes/forest-minimal.css" />
+    <link rel="stylesheet" href="../../assets/foundation/themes/graphite.css" />
+    <script>
+      const THEMES = [
+        "apple-classic",
+        "warm-editorial",
+        "forest-minimal",
+        "graphite",
+      ];
+      const requestedTheme = new URL(location.href).searchParams.get("theme");
+      if (THEMES.includes(requestedTheme))
+        document.documentElement.dataset.theme = requestedTheme;
+      const DEFAULT_TYPES={"apple-classic":"modern-sans","warm-editorial":"editorial","forest-minimal":"humanist","graphite":"technical"};
+      const TYPE_CHOICES=["auto","modern-sans","editorial","humanist","technical"];
+      const requestedType=new URL(location.href).searchParams.get("type");
+      const chosenType=TYPE_CHOICES.includes(requestedType)?requestedType:"auto";
+      document.documentElement.dataset.typeChoice=chosenType;
+      document.documentElement.dataset.typography=chosenType==="auto"?DEFAULT_TYPES[document.documentElement.dataset.theme]:chosenType;
+    </script>
+    <style>
+      :root {
+        --report-title: clamp(var(--type-heading-mobile), 4vw, 3.25rem);
+        --report-section: var(--type-segment-title);
+        --report-band-opacity: 0.13;
+        --report-grid-stroke: 1;
+        --report-curve-stroke: 3;
+        --report-chart-height: 320px;
+        --report-chart-label: 12px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 7rem;
+      }
+      body {
+        margin: 0;
+        background: var(--surface-page);
+        color: var(--text-primary);
+        font: var(--weight-regular) var(--type-body)/var(--leading-body)
+          var(--font-family-body);
+        -webkit-font-smoothing: antialiased;
+      }
+      h1,
+      h2,
+      h3,
+      p,
+      figure,
+      dl,
+      dd {
+        margin: 0;
+      }
+      h1,
+      h2,
+      h3 {
+        font-weight: var(--weight-semibold);
+        letter-spacing: 0;
+        text-wrap: balance;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button,
+      select {
+        cursor: pointer;
+      }
+      button {
+        color: inherit;
+        border: 0;
+      }
+      a {
+        color: var(--accent-strong);
+        text-decoration: none;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      summary:focus-visible,
+      [tabindex]:focus-visible {
+        outline: 3px solid var(--accent-primary);
+        outline-offset: 4px;
+      }
+      .wrap {
+        width: min(var(--content-max), calc(100% - 6rem));
+        margin-inline: auto;
+      }
+      .num {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.025em;
+      }
+      .eyebrow {
+        font-size: var(--type-footnote);
+        font-weight: var(--weight-medium);
+        color: var(--text-secondary);
+        letter-spacing: 0.05em;
+      }
+      .muted {
+        color: var(--text-secondary);
+      }
+      .accent {
+        color: var(--accent-strong);
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        clip-path: inset(50%);
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .skip {
+        position: fixed;
+        top: -6rem;
+        left: var(--space-24);
+        z-index: 50;
+        background: var(--surface-content);
+        padding: var(--space-16);
+      }
+      .skip:focus {
+        top: var(--space-16);
+      }
+      .nav-shell {
+        position: fixed;
+        inset: var(--space-20) 0 auto;
+        z-index: 20;
+        pointer-events: none;
+      }
+      .nav {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-24);
+        width: min(var(--content-navigation), calc(100% - 3rem));
+        min-height: 3.75rem;
+        margin: auto;
+        padding: var(--space-8) var(--space-12) var(--space-8) var(--space-24);
+        border: 1px solid var(--nav-edge);
+        border-radius: var(--radius-pill);
+        background: var(--nav-surface);
+        backdrop-filter: var(--nav-filter);
+        -webkit-backdrop-filter: var(--nav-filter);
+        box-shadow: var(--shadow-navigation);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-12);
+        min-height: 2.75rem;
+        color: var(--text-primary);
+        font-size: var(--type-body);
+        font-weight: var(--weight-semibold);
+        white-space: nowrap;
+      }
+      .brand small {
+        font-size: var(--type-footnote);
+        font-weight: var(--weight-regular);
+        color: var(--text-secondary);
+      }
+      .nav-links {
+        display: flex;
+        margin-left: auto;
+        gap: var(--space-4);
+      }
+      .nav-links a {
+        display: flex;
+        align-items: center;
+        min-height: 2.75rem;
+        padding: var(--space-8) var(--space-12);
+        border-radius: var(--radius-pill);
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+      }
+      .nav-links a[aria-current] {
+        background: var(--surface-content);
+        color: var(--text-primary);
+      }
+      .theme-field {
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+      }
+      .theme-field select {
+        min-height: 2.75rem;
+        max-width: 10rem;
+        padding: var(--space-8);
+        border: 1px solid var(--border-control);
+        border-radius: var(--radius-control);
+        background: var(--surface-content);
+        color: var(--text-primary);
+        font-size: var(--type-footnote);
+      }
+      .intro-section {
+        padding: 8.5rem 0 var(--space-40);
+        background: var(--surface-content);
+      }
+      .report-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 15rem;
+        gap: var(--space-64);
+        align-items: center;
+      }
+      .eyebrow-line {
+        display: flex;
+        align-items: center;
+        gap: var(--space-12);
+      }
+      .simulation {
+        display: inline-block;
+        border: 1px solid var(--border-badge);
+        border-radius: var(--radius-badge);
+        padding: var(--space-2) var(--space-6);
+        font-size: var(--type-footnote);
+        line-height: var(--leading-caption);
+        color: var(--text-secondary);
+      }
+      h1 {
+        font-size: var(--report-title);
+        line-height: var(--leading-heading);
+        margin-top: var(--space-16);
+      }
+      .intro-copy {
+        margin-top: var(--space-20);
+        max-width: 42rem;
+        font-size: var(--type-intro-small);
+        line-height: var(--leading-body);
+        color: var(--text-secondary);
+      }
+      .scope {
+        border-left: 1px solid var(--border-default);
+        padding-left: var(--space-32);
+      }
+      .scope div + div {
+        margin-top: var(--space-16);
+      }
+      .scope dt {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+      }
+      .scope dd {
+        font-size: var(--type-subhead);
+        font-weight: var(--weight-medium);
+        margin-top: var(--space-2);
+      }
+      .report-meta {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-24);
+      }
+      .trend-section {
+        padding: var(--space-40) 0 var(--space-48);
+      }
+      .chart-surface {
+        background: var(--surface-content);
+        border-radius: var(--radius-panel);
+        padding: var(--space-32) var(--space-36) var(--space-24);
+      }
+      .chart-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--space-24);
+        margin-bottom: var(--space-20);
+      }
+      .chart-heading h2 {
+        font-size: var(--type-title-small);
+        line-height: var(--leading-label);
+      }
+      .chart-heading p {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-4);
+      }
+      .segmented {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        border-radius: var(--radius-control);
+        background: var(--surface-control);
+        flex-shrink: 0;
+      }
+      .segmented button {
+        min-height: 2.75rem;
+        padding: var(--space-8) var(--space-12);
+        border-radius: var(--radius-segment);
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: var(--type-footnote);
+        white-space: nowrap;
+      }
+      .segmented button[aria-pressed="true"] {
+        background: var(--surface-content);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-segment);
+      }
+      .plot-key {
+        display: flex;
+        align-items: center;
+        gap: var(--space-20);
+        flex-wrap: wrap;
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+      }
+      .key-item {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-8);
+      }
+      .key-line {
+        display: inline-block;
+        width: 1.375rem;
+        height: 3px;
+        background: var(--chart-focus);
+      }
+      .key-band {
+        display: inline-block;
+        width: 1.375rem;
+        height: 0.75rem;
+        background: var(--chart-focus);
+        opacity: var(--report-band-opacity);
+      }
+      .key-ref {
+        display: inline-block;
+        width: 1.375rem;
+        border-top: 2px dashed var(--chart-reference);
+      }
+      .comparison-control {
+        display: inline-flex;
+        gap: var(--space-8);
+        align-items: center;
+        margin-left: auto;
+        min-height: 2.75rem;
+      }
+      .comparison-control input {
+        width: 1rem;
+        height: 1rem;
+        accent-color: var(--accent-strong);
+      }
+      .plot-container {
+        width: 100%;
+        height: var(--report-chart-height);
+        margin-top: var(--space-8);
+      }
+      .trend-svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        touch-action: pan-y;
+        cursor: crosshair;
+      }
+      .chart-axis {
+        fill: var(--chart-label);
+        font-size: var(--report-chart-label);
+      }
+      .chart-grid {
+        stroke: var(--chart-grid);
+        stroke-width: var(--report-grid-stroke);
+      }
+      .reference-line {
+        stroke: var(--chart-reference);
+        stroke-width: 1.5;
+        stroke-dasharray: 6 5;
+      }
+      .curve-focus {
+        stroke: var(--chart-focus);
+        stroke-width: var(--report-curve-stroke);
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .curve-secondary {
+        stroke: var(--chart-context);
+        stroke-width: 2;
+        fill: none;
+      }
+      .band {
+        fill: var(--chart-focus);
+        opacity: var(--report-band-opacity);
+      }
+      .cursor-line {
+        stroke: var(--chart-reference);
+        stroke-width: 1;
+        stroke-dasharray: 3 4;
+      }
+      .selected-dot {
+        fill: var(--chart-focus);
+        stroke: var(--chart-surface);
+        stroke-width: 3;
+      }
+      .plot-unit {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-8);
+      }
+      .curve-comparison-legend {
+        display: flex;
+        gap: var(--space-20);
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        min-height: 1.5rem;
+        align-items: center;
+      }
+      .curve-comparison-legend[hidden] {
+        visibility: hidden;
+        display: flex;
+      }
+      .dash-sample {
+        width: 1.5rem;
+        border-top: 2px dashed var(--chart-context);
+        display: inline-block;
+        margin-right: var(--space-6);
+      }
+      .dot-sample {
+        width: 1.5rem;
+        border-top: 2px dotted var(--chart-context);
+        display: inline-block;
+        margin-right: var(--space-6);
+      }
+      .readout-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(16rem, 1.1fr);
+        gap: var(--space-32);
+        border-top: 1px solid var(--border-default);
+        padding-top: var(--space-20);
+        margin-top: var(--space-8);
+        align-items: center;
+      }
+      .month-control label {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--type-small);
+        margin-bottom: var(--space-8);
+      }
+      .month-control input {
+        display: block;
+        width: 100%;
+        height: 2.75rem;
+        margin: 0;
+        accent-color: var(--accent-primary);
+        cursor: pointer;
+      }
+      .month-readout {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-end;
+        gap: var(--space-16);
+        flex-wrap: wrap;
+      }
+      .month-readout strong {
+        font-size: var(--type-title-large);
+        font-weight: var(--weight-semibold);
+      }
+      .month-readout span {
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+      }
+      .chart-caption {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        line-height: var(--leading-body);
+        margin-top: var(--space-16);
+      }
+      .reading-block {
+        margin-top: var(--space-32);
+        display: grid;
+        grid-template-columns: 11rem minmax(0, 1fr);
+        gap: var(--space-32);
+        align-items: start;
+      }
+      .reading-block h3 {
+        font-size: var(--type-callout);
+        font-weight: var(--weight-semibold);
+      }
+      .rank-scale {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-16);
+      }
+      .rank-scale div {
+        border-top: 2px solid var(--border-default);
+        padding-top: var(--space-8);
+      }
+      .rank-scale strong {
+        font-size: var(--type-small);
+        font-weight: var(--weight-medium);
+      }
+      .rank-scale span {
+        display: block;
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-2);
+      }
+      .scale-note {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-16);
+      }
+      .finding-line {
+        margin-top: var(--space-32);
+        padding-top: var(--space-24);
+        border-top: 1px solid var(--border-default);
+        display: grid;
+        grid-template-columns: 11rem 1fr;
+        gap: var(--space-32);
+      }
+      .finding-line h3 {
+        font-size: var(--type-callout);
+      }
+      .finding-line p {
+        font-size: var(--type-body);
+        line-height: var(--leading-body);
+      }
+      .finding-line .detail {
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+        margin-top: var(--space-8);
+      }
+      .white-section {
+        background: var(--surface-content);
+      }
+      .section {
+        padding-block: var(--space-72);
+      }
+      .section-heading {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-48);
+        align-items: end;
+        margin-bottom: var(--space-32);
+      }
+      .section-heading h2 {
+        font-size: var(--report-section);
+        line-height: var(--leading-heading);
+        margin-top: var(--space-12);
+      }
+      .section-heading .lead {
+        font-size: var(--type-body);
+        color: var(--text-secondary);
+        line-height: var(--leading-body);
+      }
+      .table-scroll {
+        overflow: auto;
+        scrollbar-width: thin;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: var(--type-small);
+        line-height: var(--leading-caption);
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      th,
+      td {
+        padding: var(--space-16) var(--space-12);
+        border-bottom: 1px solid var(--border-default);
+        white-space: nowrap;
+      }
+      thead th {
+        font-size: var(--type-footnote);
+        font-weight: var(--weight-medium);
+        color: var(--text-secondary);
+        border-bottom-color: var(--border-strong);
+        vertical-align: bottom;
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+        padding-left: 0;
+      }
+      th:last-child,
+      td:last-child {
+        padding-right: 0;
+      }
+      tbody th {
+        font-weight: var(--weight-medium);
+      }
+      .model-table {
+        min-width: 45rem;
+      }
+      .model-table th:first-child {
+        width: 24%;
+      }
+      .model-select {
+        background: transparent;
+        color: inherit;
+        min-height: 2.75rem;
+        text-align: left;
+        padding: 0;
+        font-size: var(--type-small);
+      }
+      .model-table tr.active {
+        background: var(--surface-selected);
+        color: var(--accent-strong);
+      }
+      .model-table tr.active th {
+        padding-left: var(--space-12);
+      }
+      .model-table tr.active td:last-child {
+        padding-right: var(--space-12);
+      }
+      .model-select span {
+        display: block;
+        font-size: var(--type-footnote);
+        font-weight: var(--weight-regular);
+        color: var(--text-secondary);
+      }
+      .table-note {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-16);
+        line-height: var(--leading-body);
+      }
+      .model-interpretation {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-48);
+        margin-top: var(--space-32);
+      }
+      .model-interpretation h3 {
+        font-size: var(--type-callout);
+        margin-bottom: var(--space-8);
+      }
+      .model-interpretation p {
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+      }
+      .table-hint {
+        display: none;
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-bottom: var(--space-8);
+      }
+      .uncertainty-section {
+        padding-block: var(--space-64);
+      }
+      .uncertainty-canvas {
+        background: var(--surface-content);
+        border-radius: var(--radius-panel);
+        padding: var(--space-32);
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: var(--space-40);
+      }
+      .uncertainty-canvas h3 {
+        font-size: var(--type-subhead);
+        line-height: var(--leading-label);
+      }
+      .uncertainty-canvas .sub {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-6);
+      }
+      .support-chart {
+        width: 100%;
+        height: 15rem;
+        display: block;
+        margin-top: var(--space-16);
+      }
+      .support-note {
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+        line-height: var(--leading-body);
+        margin-top: var(--space-16);
+      }
+      .prediction-panel {
+        border-left: 1px solid var(--border-default);
+        padding-left: var(--space-32);
+      }
+      .prediction-control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-16);
+      }
+      .prediction-control select {
+        background: var(--surface-control);
+        color: var(--text-primary);
+        border: 0;
+        min-height: 2.75rem;
+        border-radius: var(--radius-control);
+        padding: var(--space-8);
+        font-size: var(--type-footnote);
+      }
+      .probability-list {
+        margin-top: var(--space-24);
+      }
+      .probability-row {
+        display: grid;
+        grid-template-columns: 4rem 1fr 3.5rem;
+        gap: var(--space-12);
+        align-items: center;
+        margin-top: var(--space-16);
+        font-size: var(--type-small);
+      }
+      .probability-track {
+        height: 0.5rem;
+        border-radius: var(--radius-pill);
+        background: var(--surface-page);
+        overflow: hidden;
+      }
+      .probability-fill {
+        height: 100%;
+        background: var(--chart-context);
+        border-radius: var(--radius-pill);
+      }
+      .probability-row strong {
+        font-weight: var(--weight-medium);
+        text-align: right;
+      }
+      .prediction-summary {
+        border-top: 1px solid var(--border-default);
+        padding-top: var(--space-20);
+        margin-top: var(--space-24);
+      }
+      .prediction-summary strong {
+        font-size: var(--type-title-small);
+        font-weight: var(--weight-semibold);
+      }
+      .prediction-summary p {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-6);
+      }
+      .uncertainty-foot {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-48);
+        margin-top: var(--space-24);
+      }
+      .uncertainty-foot p {
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+      }
+      .uncertainty-foot strong {
+        color: var(--text-primary);
+        font-weight: var(--weight-medium);
+      }
+      .methods-section {
+        padding-top: var(--space-64);
+        padding-bottom: var(--space-64);
+      }
+      .definition-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-24) var(--space-48);
+        margin-bottom: var(--space-32);
+      }
+      .definition-grid dt {
+        font-size: var(--type-small);
+        font-weight: var(--weight-semibold);
+        margin-bottom: var(--space-6);
+      }
+      .definition-grid dd {
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+      }
+      details {
+        border-bottom: 1px solid var(--border-default);
+      }
+      summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-16);
+        min-height: 3.5rem;
+        padding-block: var(--space-8);
+        font-size: var(--type-callout);
+        font-weight: var(--weight-medium);
+        cursor: pointer;
+        list-style: none;
+      }
+      summary:after {
+        content: "+";
+        font-size: var(--type-title-small);
+        color: var(--text-secondary);
+      }
+      details[open] summary:after {
+        content: "−";
+      }
+      summary::-webkit-details-marker {
+        display: none;
+      }
+      .disclosure {
+        padding: var(--space-12) 0 var(--space-24);
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+      }
+      .disclosure p + p {
+        margin-top: var(--space-12);
+      }
+      .formula {
+        display: block;
+        overflow: auto;
+        white-space: nowrap;
+        padding: var(--space-16);
+        margin-block: var(--space-16);
+        background: var(--surface-page);
+        border-radius: var(--radius-control);
+        font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        font-size: var(--type-small);
+        color: var(--text-primary);
+      }
+      .parameters-table {
+        min-width: 40rem;
+      }
+      .parameters-table th:first-child {
+        min-width: 15rem;
+      }
+      .result-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-24);
+        margin-top: var(--space-40);
+        margin-bottom: var(--space-16);
+      }
+      .result-heading h3 {
+        font-size: var(--type-subhead);
+      }
+      .result-heading p {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-4);
+      }
+      .export {
+        min-height: 2.75rem;
+        padding: var(--space-8) var(--space-16);
+        border: 1px solid var(--border-control);
+        border-radius: var(--radius-pill);
+        background: var(--surface-content);
+        font-size: var(--type-footnote);
+        white-space: nowrap;
+      }
+      .export:hover {
+        background: var(--surface-control);
+      }
+      .prediction-table {
+        min-width: 45rem;
+      }
+      .prediction-table tr.selected {
+        background: var(--surface-selected);
+      }
+      .prediction-table tr.selected th {
+        padding-left: var(--space-12);
+        color: var(--accent-strong);
+      }
+      .prediction-table th:first-child {
+        width: 10%;
+      }
+      .limits {
+        margin-top: var(--space-32);
+        padding-top: var(--space-24);
+        border-top: 1px solid var(--border-default);
+        display: grid;
+        grid-template-columns: 11rem 1fr;
+        gap: var(--space-32);
+      }
+      .limits h3 {
+        font-size: var(--type-callout);
+      }
+      .limits p {
+        font-size: var(--type-small);
+        color: var(--text-secondary);
+      }
+      .sources {
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        margin-top: var(--space-24);
+      }
+      .sources a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
+        margin-right: var(--space-20);
+      }
+      footer {
+        padding-block: var(--space-32);
+        font-size: var(--type-footnote);
+        color: var(--text-secondary);
+        border-top: 1px solid var(--border-default);
+      }
+      .footer-line {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-24);
+        align-items: center;
+      }
+      footer p {
+        font-size: var(--type-footnote);
+        margin-top: var(--space-8);
+      }
+      .status {
+        position: fixed;
+        bottom: var(--space-20);
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--surface-content);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-pill);
+        padding: var(--space-12) var(--space-24);
+        font-size: var(--type-small);
+        z-index: 30;
+      }
+      .status:empty {
+        display: none;
+      }
+      @media (max-width: 1050px) {
+        .wrap {
+          width: calc(100% - 4rem);
+        }
+        .report-heading {
+          gap: var(--space-32);
+          grid-template-columns: minmax(0, 1fr) 12rem;
+        }
+        .brand small {
+          display: none;
+        }
+        .nav-links a {
+          padding-inline: var(--space-8);
+        }
+        .chart-heading {
+          align-items: flex-start;
+        }
+        .chart-heading h2 {
+          max-width: 24rem;
+        }
+        .chart-surface {
+          padding-inline: var(--space-24);
+        }
+        .uncertainty-canvas {
+          gap: var(--space-24);
+          padding: var(--space-24);
+        }
+        .prediction-panel {
+          padding-left: var(--space-24);
+        }
+      }
+      @media (max-width: 760px) {
+        :root {
+          --report-chart-height: 290px;
+          --report-section: var(--type-heading-mobile);
+        }
+        html {
+          scroll-padding-top: 6rem;
+        }
+        .wrap {
+          width: calc(100% - 3rem);
+        }
+        .nav-shell {
+          top: var(--space-12);
+        }
+        .nav {
+          width: calc(100% - 1.5rem);
+          padding-left: var(--space-16);
+          gap: var(--space-12);
+          min-height: 3.5rem;
+        }
+        .brand {
+          font-size: var(--type-callout);
+        }
+        .nav-links {
+          display: none;
+        }
+        .theme-field > span {
+          display: none;
+        }
+        .theme-field select {
+          max-width: 9.5rem;
+          font-size: var(--type-footnote);
+        }
+        .intro-section {
+          padding-top: 7rem;
+          padding-bottom: var(--space-28);
+        }
+        .report-heading {
+          grid-template-columns: 1fr;
+          gap: var(--space-24);
+        }
+        h1 {
+          font-size: var(--type-heading-mobile);
+          line-height: var(--leading-heading);
+          margin-top: var(--space-16);
+        }
+        .intro-copy {
+          font-size: var(--type-body);
+          margin-top: var(--space-16);
+        }
+        .scope {
+          display: flex;
+          gap: var(--space-24);
+          border-left: 0;
+          border-top: 1px solid var(--border-default);
+          padding: var(--space-16) 0 0;
+        }
+        .scope div + div {
+          margin: 0;
+        }
+        .scope dt {
+          font-size: var(--type-footnote);
+        }
+        .scope dd {
+          font-size: var(--type-callout);
+          line-height: var(--leading-label);
+        }
+        .report-meta {
+          font-size: var(--type-footnote);
+          margin-top: var(--space-16);
+        }
+        .trend-section {
+          padding: var(--space-24) 0 var(--space-32);
+        }
+        .chart-surface {
+          padding: var(--space-24) var(--space-16) var(--space-20);
+          border-radius: var(--radius-panel-compact);
+        }
+        .chart-heading {
+          display: block;
+          margin-bottom: var(--space-12);
+        }
+        .chart-heading h2 {
+          font-size: var(--type-subhead);
+        }
+        .segmented {
+          width: fit-content;
+          margin-top: var(--space-16);
+          max-width: 100%;
+        }
+        .segmented button {
+          padding-inline: var(--space-10);
+          font-size: var(--type-footnote);
+        }
+        .plot-key {
+          gap: var(--space-8) var(--space-16);
+        }
+        .comparison-control {
+          margin-left: 0;
+          width: 100%;
+        }
+        .plot-unit {
+          margin-top: var(--space-4);
+        }
+        .readout-row {
+          grid-template-columns: 1fr;
+          gap: var(--space-8);
+          margin-top: var(--space-4);
+        }
+        .month-readout {
+          justify-content: flex-start;
+          gap: var(--space-12);
+        }
+        .month-readout strong {
+          font-size: var(--type-title-medium);
+        }
+        .month-readout span {
+          font-size: var(--type-footnote);
+        }
+        .chart-caption {
+          font-size: var(--type-footnote);
+          margin-top: var(--space-12);
+        }
+        .curve-comparison-legend {
+          gap: var(--space-12);
+          font-size: var(--type-footnote);
+        }
+        .reading-block,
+        .finding-line {
+          grid-template-columns: 1fr;
+          gap: var(--space-16);
+          margin-top: var(--space-24);
+        }
+        .rank-scale {
+          gap: var(--space-8);
+        }
+        .rank-scale strong {
+          font-size: var(--type-footnote);
+        }
+        .rank-scale span {
+          font-size: var(--type-footnote);
+        }
+        .scale-note {
+          font-size: var(--type-footnote);
+        }
+        .finding-line p {
+          font-size: var(--type-callout);
+        }
+        .finding-line .detail {
+          font-size: var(--type-small);
+        }
+        .section {
+          padding-block: var(--space-48);
+        }
+        .section-heading {
+          grid-template-columns: 1fr;
+          gap: var(--space-16);
+          margin-bottom: var(--space-24);
+        }
+        .section-heading h2 {
+          font-size: var(--type-heading-mobile);
+        }
+        .section-heading .lead {
+          font-size: var(--type-callout);
+        }
+        .model-interpretation {
+          grid-template-columns: 1fr;
+          gap: var(--space-24);
+          margin-top: var(--space-24);
+        }
+        .table-hint {
+          display: block;
+        }
+        .uncertainty-section {
+          padding-block: var(--space-40);
+        }
+        .uncertainty-canvas {
+          grid-template-columns: 1fr;
+          padding: var(--space-24) var(--space-20);
+          border-radius: var(--radius-panel-compact);
+          gap: var(--space-28);
+        }
+        .prediction-panel {
+          border-left: 0;
+          border-top: 1px solid var(--border-default);
+          padding: var(--space-24) 0 0;
+        }
+        .uncertainty-foot {
+          grid-template-columns: 1fr;
+          gap: var(--space-16);
+        }
+        .support-chart {
+          height: 14rem;
+        }
+        .definition-grid {
+          grid-template-columns: 1fr;
+          gap: var(--space-24);
+        }
+        .result-heading {
+          align-items: flex-start;
+          gap: var(--space-16);
+        }
+        .result-heading h3 {
+          font-size: var(--type-subhead);
+        }
+        .export {
+          padding-inline: var(--space-12);
+        }
+        .limits {
+          grid-template-columns: 1fr;
+          gap: var(--space-12);
+        }
+        .footer-line {
+          display: block;
+        }
+        .footer-line span {
+          display: block;
+          margin-top: var(--space-8);
+        }
+        .status {
+          max-width: calc(100% - 2rem);
+          width: max-content;
+          text-align: center;
+        }
+      }
+      @media (max-width: 360px) {
+        .scope {
+          gap: var(--space-16);
+        }
+        .scope dd {
+          font-size: var(--type-small);
+        }
+        .segmented button {
+          padding-inline: var(--space-6);
+          font-size: var(--type-footnote);
+        }
+        .prediction-control {
+          gap: var(--space-8);
+        }
+        .prediction-control h3 {
+          font-size: var(--type-body);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+      @media (prefers-reduced-transparency: reduce) {
+        .nav {
+          background: var(--nav-solid);
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+        }
+      }
+      @media (prefers-contrast: more) {
+        :root[data-theme] {
+          --text-secondary: var(--text-high-contrast);
+          --border-default: var(--border-high-contrast);
+          --chart-context: var(--chart-high-contrast);
+          --report-band-opacity: 0.2;
+        }
+        .nav {
+          background: var(--surface-content);
+          backdrop-filter: none;
+        }
+      }
+      @media print {
+        @page {
+          size: A4;
+          margin: 15mm;
+        }
+        html {
+          font-size: 11px;
+        }
+        body {
+          background: var(--surface-content);
+        }
+        .nav-shell,
+        .skip,
+        .theme-field,
+        .segmented,
+        .comparison-control,
+        .month-control,
+        .export,
+        .prediction-control select,
+        .status {
+          display: none !important;
+        }
+        .wrap {
+          width: 100%;
+        }
+        .intro-section {
+          padding: var(--space-24) 0;
+        }
+        .trend-section,
+        .section,
+        .uncertainty-section {
+          padding-block: var(--space-32);
+        }
+        h1 {
+          font-size: var(--type-heading);
+        }
+        .chart-surface,
+        .uncertainty-canvas {
+          break-inside: avoid;
+          border: 1px solid var(--border-default);
+        }
+        .plot-container {
+          height: 300px;
+        }
+        .readout-row {
+          display: block;
+        }
+        .month-readout {
+          justify-content: flex-start;
+        }
+        .table-scroll {
+          overflow: visible;
+        }
+        .model-table,
+        .prediction-table,
+        .parameters-table {
+          min-width: 0;
+          font-size: var(--type-footnote);
+        }
+        th,
+        td {
+          padding: var(--space-8);
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr {
+          break-inside: avoid;
+        }
+        .table-hint {
+          display: none;
+        }
+        .section-heading {
+          break-after: avoid;
+        }
+        .report-heading {
+          grid-template-columns: 1fr 13rem;
+        }
+        .sources {
+          break-inside: avoid;
+        }
+      }
+
+      /* Refinements from actual mobile chart screenshots. */
+      .curve-comparison-legend > span {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-6);
+        white-space: nowrap;
+      }
+      .table-scroll table th:first-child {
+        position: sticky;
+        left: 0;
+        background: var(--surface-content);
+        z-index: 1;
+        border-right: 1px solid var(--border-subtle);
+      }
+      .table-scroll table thead th:first-child {
+        z-index: 2;
+      }
+      .table-scroll .model-table tr.active th,
+      .table-scroll .prediction-table tr.selected th {
+        background: var(--surface-selected);
+      }
+      .parameters-table th:first-child {
+        min-width: 12rem;
+        width: 30%;
+        white-space: normal;
+      }
+      @media print {
+        .table-scroll table th:first-child {
+          position: static;
+        }
+      }
+    </style>
+
+    <style id="composition-pattern-styles">
+      /* Composition relationships are shared by all four themes. */
+      .composition-hero { background:var(--surface-page);padding:var(--space-146) 0 var(--space-72); }
+      .hero-heading {text-align:center;}
+      .hero-heading .eyebrow-line {justify-content:center;}
+      .hero-heading h1 {font-size:var(--space-64);line-height:1.22;margin:var(--space-28) auto 0;font-weight:var(--weight-display);max-width:var(--content-max);}
+      .hero-question {font-size:var(--type-intro);line-height:var(--leading-body);color:var(--text-secondary);margin:var(--space-24) auto 0;max-width:var(--content-hero-reading);}
+      .hero-meta {font-size:var(--type-footnote);line-height:1.9;color:var(--text-secondary);margin-top:var(--space-24);}
+      .hero-meta span {padding-inline:var(--space-8);}
+      .insight-panel {display:grid;grid-template-columns:.85fr 1.15fr;background:var(--surface-content);border-radius:var(--radius-panel);margin-top:var(--space-48);padding:var(--space-44) var(--space-52);gap:var(--space-44);align-items:center;}
+      .insight-result {min-width:0;}
+      .insight-result h2 {font-size:var(--type-small);line-height:var(--leading-caption);font-weight:var(--weight-semibold);}
+      .insight-number {color:var(--accent-primary);font-size:var(--space-64);font-weight:var(--weight-semibold);line-height:1.15;margin-top:var(--space-24);white-space:nowrap;}
+      .insight-unit {font-size:var(--type-body);font-weight:var(--weight-regular);margin-left:var(--space-6);}
+      .insight-ci {font-size:var(--type-small);color:var(--text-secondary);margin-top:var(--space-12);}
+      .insight-context {font-size:var(--type-footnote);color:var(--text-secondary);line-height:var(--leading-body);margin-top:var(--space-20);}
+      .insight-evidence {min-width:0;border-left:1px solid var(--border-default);padding-left:var(--space-44);}
+      .insight-chart-heading {display:flex;justify-content:space-between;gap:var(--space-12);align-items:baseline;margin-bottom:var(--space-24);}
+      .insight-chart-heading h3,.insight-chart-heading span {font-size:var(--type-footnote);font-weight:var(--weight-regular);color:var(--text-secondary);}
+      .insight-point + .insight-point {margin-top:var(--space-18);}
+      .insight-point-heading {display:flex;align-items:baseline;justify-content:space-between;font-size:var(--type-small);}
+      .insight-point-heading strong {font-size:var(--type-title-large);font-weight:var(--weight-medium);}
+      .insight-point-heading small {font-size:var(--type-footnote);font-weight:var(--weight-regular);}
+      .insight-point:last-child {color:var(--accent-strong);}
+      .insight-point svg {display:block;width:100%;height:var(--space-28);overflow:visible;}
+      .insight-axis {display:flex;justify-content:space-between;color:var(--text-secondary);font-size:var(--type-caption);margin-top:var(--space-2);}
+      .insight-evidence figcaption {font-size:var(--type-caption);color:var(--text-secondary);line-height:var(--leading-body);margin-top:var(--space-16);}
+      .composition-findings {padding:var(--space-88) 0 var(--space-64);}
+      .editorial-findings {display:grid;grid-template-columns:.8fr 1.2fr;gap:var(--space-80);}
+      .editorial-findings h2,.evidence-heading h2 {font-size:var(--type-heading);line-height:var(--leading-heading);margin-top:var(--space-12);}
+      .findings-intro {font-size:var(--type-callout);color:var(--text-secondary);margin-top:var(--space-24);}
+      .findings-list article {padding:var(--space-24) 0;border-top:1px solid var(--border-default);}
+      .findings-list article:first-child {padding-top:0;border-top:0;}
+      .findings-list article:last-child {padding-bottom:0;}
+      .findings-list h3 {font-size:var(--type-subhead);margin-bottom:var(--space-8);}
+      .findings-list p {font-size:var(--type-body-compact);color:var(--text-secondary);}
+      .composition-findings .reading-block {margin-top:var(--space-48);padding-top:var(--space-28);border-top:1px solid var(--border-default);}
+      .composition-evidence {padding:var(--space-80) 0 var(--space-56);}
+      .evidence-heading {margin-bottom:var(--space-36);}
+      .evidence-support {font-size:var(--type-footnote);color:var(--text-secondary);margin:var(--space-18) var(--space-8) 0;}
+      @media(max-width:900px) {
+        .insight-panel {padding:var(--space-32);gap:var(--space-28);}
+        .insight-evidence {padding-left:var(--space-28);}
+        .insight-number {font-size:var(--type-metric);}
+        .editorial-findings {gap:var(--space-40);}
+      }
+      @media(max-width:640px) {
+        .composition-hero {padding:var(--space-112) 0 var(--space-40);}
+        .hero-heading h1 {font-size:var(--type-hero-narrow);line-height:1.25;margin-top:var(--space-24);}
+        .hero-question {font-size:var(--type-body-compact);margin-top:var(--space-20);}
+        .desktop-break {display:none;}
+        .hero-meta {font-size:var(--type-caption);margin-top:var(--space-20);}
+        .hero-meta span {padding-inline:var(--space-2);}
+        .insight-panel {grid-template-columns:1fr;gap:var(--space-24);padding:var(--space-28) var(--space-24);margin-top:var(--space-32);border-radius:var(--radius-panel-compact);}
+        .insight-number {font-size:var(--type-metric);margin-top:var(--space-18);}
+        .insight-context {margin-top:var(--space-12);}
+        .insight-evidence {padding:var(--space-24) 0 0;border-left:0;border-top:1px solid var(--border-default);}
+        .insight-chart-heading {margin-bottom:var(--space-18);}
+        .composition-findings {padding:var(--space-48) 0 var(--space-40);}
+        .editorial-findings {grid-template-columns:1fr;gap:var(--space-28);}
+        .editorial-findings h2,.evidence-heading h2 {font-size:var(--type-heading-mobile);}
+        .findings-intro {margin-top:var(--space-16);}
+        .findings-list h3 {font-size:var(--type-body);}
+        .findings-list p {font-size:var(--type-callout);}
+        .composition-findings .reading-block {margin-top:var(--space-32);}
+        .composition-evidence {padding:var(--space-48) 0 var(--space-40);}
+      }
+      @media print {
+        .composition-hero {padding:0 0 var(--space-24);}
+        .table-scroll:has(.prediction-table) {break-inside:avoid;}
+        .result-heading {break-after:avoid;}
+        .hero-heading h1 {font-size:var(--type-heading-mobile);}
+        .hero-question {font-size:var(--type-callout);margin-top:var(--space-12);}
+        .hero-meta {margin-top:var(--space-8);}
+        .insight-panel {break-inside:avoid;margin-top:var(--space-20);padding:var(--space-24);gap:var(--space-24);grid-template-columns:.85fr 1.15fr;}
+        .insight-number {font-size:var(--type-metric);}
+        .composition-findings,.composition-evidence {padding:var(--space-24) 0;}
+        .editorial-findings {gap:var(--space-32);}
+        .editorial-findings h2,.evidence-heading h2 {font-size:var(--type-title-large);}
+      }
+    </style>
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/fonts/font-faces.css">
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/typography-profiles.css">
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/presets/apple-classic.css">
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/presets/warm-editorial.css">
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/presets/forest-minimal.css">
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/presets/graphite.css">
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/chart-styles.css">
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/decorative-elements.css">
+    <link rel="stylesheet" href="../../assets/foundation/hallmark/lab-controls.css">
+  </head>
+  <body>
+    <a class="skip" href="#trend">跳至时间效应图</a>
+    <div class="nav-shell">
+      <nav class="nav" aria-label="报告导航">
+        <a class="brand" href="#home">冰激淋口味研究</a>
+        <div class="nav-links">
+          <a href="#home" aria-current="location">研究概览</a><a href="#trend">时间效应</a
+          ><a href="#models">模型比较</a><a href="#uncertainty">不确定性</a
+          ><a href="#methods">方法</a>
+        </div>
+        <button class="design-toggle" id="design-toggle" popovertarget="design-controls" aria-label="打开外观与排版设置">外观与排版 <small id="active-design">Apple Classic</small><span aria-hidden="true">⌄</span></button>
+      </nav>
+    </div>
+    <aside class="design-controls" id="design-controls" popover="auto" aria-labelledby="design-controls-title">
+      <div class="controls-heading"><h2 id="design-controls-title">外观与排版</h2><button popovertarget="design-controls" popovertargetaction="hide" aria-label="关闭外观设置">×</button></div>
+      <label for="theme-picker"><span>Visual Theme · 颜色、材质与图表</span><select id="theme-picker"><option value="apple-classic">Apple Classic</option><option value="warm-editorial">Warm Editorial</option><option value="forest-minimal">Forest Minimal</option><option value="graphite">Graphite</option></select></label>
+      <label for="type-picker"><span>Typography Profile · 独立字体配置</span><select id="type-picker"><option value="auto">Auto · 采用主题推荐</option><option value="modern-sans">Modern Sans</option><option value="editorial">Editorial</option><option value="humanist">Humanist</option><option value="technical">Technical</option></select></label>
+      <output id="design-description" for="theme-picker type-picker" aria-live="polite"></output>
+      <button id="reset-design">恢复默认组合</button>
+    </aside>
+    <main>
+      <header class="composition-hero" id="home">
+        <div class="wrap">
+          <div class="hero-heading">
+            <div class="eyebrow-line"><p class="eyebrow">排序分析</p><span class="simulation">完全虚构示例</span></div>
+            <h1>前十二天，<br><span class="accent">排序位置后移。</span></h1>
+            <p class="hero-question">距上次试吃香草冰激淋越久，<br class="desktop-break">它在四种口味的喜好排序中如何变化？</p>
+
+          </div>
+          <section class="insight-panel" aria-labelledby="insight-title">
+            <div class="insight-result">
+              <h2 id="insight-title">12 天相对 0 天，预测排名百分位差值</h2>
+              <p class="insight-number num"><span id="hero-effect"></span><span class="insight-unit">个百分点</span></p>
+              <p class="insight-ci" id="hero-contrast-ci"></p>
+              <p class="insight-context">主分析 · 自然三次样条<br>喜好排序的变化，不是购买概率。</p>
+            </div>
+            <figure class="insight-evidence" aria-labelledby="insight-chart-title">
+              <div class="insight-chart-heading"><h3 id="insight-chart-title">0 天与 12 天</h3><span>预测均值 · 95% CI</span></div>
+              <div id="insight-points"></div>
+              <div class="insight-axis"><span>0% · 最靠后</span><span>50%</span><span>100% · 最靠前</span></div>
+              <figcaption>同一偏甜口味构成下的预测；两行是均值区间，左侧是联合差值区间。模拟关联，不能推断因果。</figcaption>
+            </figure>
+          </section>
+        </div>
+      </header>
+      <section class="composition-findings white-section" aria-labelledby="findings-title">
+        <div class="wrap">
+          <div class="editorial-findings">
+            <div><p class="eyebrow">研究发现</p><h2 id="findings-title">结果如何理解</h2></div>
+            <div class="findings-list">
+              <article><h3>群体均值，不是每个人的变化。</h3><p id="main-finding"></p></article>
+              <article><h3>12 天以后，方向仍不确定。</h3><p id="tail-finding"></p></article>
+              <article><h3>拟合改善，预测优势未定。</h3><p id="overview-model-note"></p></article>
+            </div>
+          </div>
+<div class="reading-block">
+            <h3>怎样读“排名百分位”</h3>
+            <div>
+              <div class="rank-scale">
+                <div><strong>第 1 位</strong><span>100% · 最靠前</span></div>
+                <div><strong>第 2 位</strong><span>66.7%</span></div>
+                <div><strong>第 3 位</strong><span>33.3%</span></div>
+                <div><strong>第 4 位</strong><span>0% · 最靠后</span></div>
+              </div>
+              <p class="scale-note">
+                按当前喜好优先级排序，不按事件日期。百分位表示四种口味内的位置，不是试吃参与者群体分位数。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="trend-section composition-evidence" id="trend" aria-labelledby="evidence-title">
+        <div class="wrap">
+          <div class="section-heading evidence-heading"><div><p class="eyebrow">主要证据</p><h2 id="evidence-title">时间与排序位置</h2></div></div>
+<figure class="chart-surface">
+            <div class="chart-heading">
+              <div>
+                <h2 id="trend-title">间隔天数与预测排名百分位</h2>
+
+              </div>
+              <div class="segmented" role="group" aria-label="选择间隔天数模型">
+                <button data-model="linear" aria-pressed="false">线性</button
+                ><button data-model="spline" aria-pressed="true">
+                  自然样条</button
+                ><button data-model="piecewise" aria-pressed="false">
+                  分段线性
+                </button>
+              </div>
+            </div>
+            <div class="plot-key">
+              <span class="key-item"
+                ><i class="key-line" aria-hidden="true"></i>预测均值</span
+              ><span class="key-item"
+                ><i class="key-band" aria-hidden="true"></i>95% CI</span
+              ><span class="key-item"
+                ><svg class="key-reference" width="22" height="8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="var(--chart-reference)" stroke-width="1.5"/></svg>50% 参考</span
+              ><label class="comparison-control"
+                ><input
+                  id="compare-models"
+                  type="checkbox"
+                />叠加其他模型</label
+              >
+            </div>
+            <p class="plot-unit">预测排名百分位（%）</p>
+            <div class="plot-container">
+              <svg
+                id="trend-svg"
+                class="trend-svg"
+                role="img"
+                aria-labelledby="trend-svg-title trend-svg-description"
+              ></svg>
+            </div>
+            <div
+              class="curve-comparison-legend"
+              id="comparison-legend"
+              hidden
+            ></div>
+            <div class="readout-row">
+              <div class="month-control">
+                <label for="month-slider"
+                  >选择事件间隔
+                  <output id="month-label" for="month-slider"
+                    >12 天</output
+                  ></label
+                ><input
+                  id="month-slider"
+                  type="range"
+                  min="0"
+                  max="24"
+                  step="1"
+                  value="12"
+                  aria-describedby="month-readout"
+                />
+              </div>
+              <div
+                class="month-readout"
+                id="month-readout"
+                role="status"
+                aria-live="polite"
+              ></div>
+            </div>
+            <figcaption class="chart-caption">阴影为均值的逐点 95% CI，不是个体预测范围或全曲线同时置信带。50% 仅表示排序居中。点击曲线或用滑杆方向键选天。</figcaption>
+          </figure>
+          <p class="evidence-support">仅解释 0–24 天。18–24 天仅 181 位试吃参与者（11.3%），尾段不宜外推为长期趋势。</p>
+        </div>
+      </section>
+      <section
+        class="section white-section"
+        id="models"
+        aria-labelledby="models-title"
+      >
+        <div class="wrap">
+          <div class="section-heading">
+            <div>
+              
+              <h2 id="models-title">模型比较</h2>
+            </div>
+            <p class="lead">同一数据、协变量与试吃参与者级五折划分；AIC 和验证 NLL 越低越好。</p>
+          </div>
+          <p class="table-hint">
+            左右滑动查看全部指标；点击模型名称可切换主图。
+          </p>
+          <div
+            class="table-scroll"
+            role="region"
+            tabindex="0"
+            aria-label="三个排序模型的比较"
+          >
+            <table class="model-table">
+              <caption class="sr-only">
+                模型参数数、对数似然、AIC、AIC差值及五折验证每位试吃参与者负对数似然，后两种损失越低越好。
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">间隔天数设定</th>
+                  <th scope="col">参数数 k</th>
+                  <th scope="col">对数似然</th>
+                  <th scope="col">AIC ↓</th>
+                  <th scope="col">ΔAIC</th>
+                  <th scope="col">五折验证 NLL ↓<br />每位试吃参与者</th>
+                </tr>
+              </thead>
+              <tbody id="model-table"></tbody>
+            </table>
+          </div>
+<details id="comparison-method"><summary>比较指标与验证口径</summary><div class="disclosure"><p>AIC = 2k − 2 log L；ΔAIC 相对本组三个模型中的最小值。验证按独立试吃参与者划分，避免同一排序的顺序选择阶段跨折泄漏。验证损失为完整排序的负对数概率。</p></div></details>
+          <div class="model-interpretation">
+            <article>
+              <h3>非线性检验</h3>
+              <p id="lr-result"></p>
+            </article>
+            <article>
+              <h3>样本外表现</h3>
+              <p id="cv-result"></p>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section
+        class="uncertainty-section"
+        id="uncertainty"
+        aria-labelledby="uncertainty-title"
+      >
+        <div class="wrap">
+          <div class="section-heading">
+            <div>
+              
+              <h2 id="uncertainty-title">均值与个体差异</h2>
+            </div>
+
+          </div>
+          <div class="uncertainty-canvas">
+            <figure>
+              <h3>间隔天数的数据支持</h3>
+              <p class="sub" id="support-binning-note">
+                试吃参与者数 · 互斥间隔天数区间 · 最后一组跨度为 4 天
+              </p>
+              <svg
+                id="support-svg"
+                class="support-chart"
+                role="img"
+                aria-labelledby="support-svg-title support-svg-description"
+              ></svg>
+              <figcaption class="support-note" id="support-note"></figcaption>
+            </figure>
+            <article class="prediction-panel">
+              <div class="prediction-control">
+                <h3>一个试吃参与者，四种位置</h3>
+                <label
+                  ><span class="sr-only">预测分布参考间隔天数</span
+                  ><select id="distribution-month"></select
+                ></label>
+              </div>
+              <p class="sub" id="distribution-model"></p>
+              <div
+                class="probability-list"
+                id="probability-list"
+                aria-label="香草口味四个可能名次的预测概率"
+              ></div>
+              <div
+                class="prediction-summary"
+                id="prediction-summary"
+                aria-live="polite"
+              ></div>
+            </article>
+          </div>
+
+        </div>
+      </section>
+      <section
+        class="section white-section methods-section"
+        id="methods"
+        aria-labelledby="methods-title"
+      >
+        <div class="wrap">
+          <div class="section-heading">
+            <div>
+              
+              <h2 id="methods-title">方法与统计明细</h2>
+            </div>
+
+          </div>
+          <dl class="method-facts"><div><dt>独立样本</dt><dd><span class="num">1,600</span> 位试吃参与者 · 每人 4 项完整排序</dd></div><div><dt>模型与验证</dt><dd>最大似然估计 · 试吃参与者级五折验证</dd></div><div><dt>推断口径</dt><dd>主分析自然样条 · 逐点 95% CI</dd></div></dl>
+          <p class="method-boundary">适用于固定四候选项、无并列且试吃参与者独立的排序；IIA 假设及应用限制见“研究设定与分析口径”。</p>
+          <details id="study-settings"><summary>研究设定与分析口径</summary><div class="disclosure"><p>全部样本为独立生成的虚构冰激淋试吃数据，不含真实企业记录，三个模型均实际拟合，不代表真实试吃参与者结论。观察范围为 0–24 天。</p>
+          <dl class="definition-grid">
+            <div>
+              <dt>分析单位</dt>
+              <dd>
+                1,600 位独立模拟试吃参与者，每人对四种冰激淋口味完成一次无并列排序。共有
+                4,800 个有信息的顺序选择阶段；阶段不作为独立样本计数。
+              </dd>
+            </div>
+            <div>
+              <dt>候选口味与方向</dt>
+              <dd>
+                香草冰激淋、巧克力冰激淋、草莓冰激淋、抹茶冰激淋。排名 1 为最优先，4
+                为最后。口味集合固定；本次只分析香草冰激淋的相对排序。
+              </dd>
+            </div>
+            <div>
+              <dt>调整与标准化</dt>
+              <dd id="standardization-note"></dd>
+            </div>
+            <div>
+              <dt>比较与推断</dt>
+              <dd>
+                预设 12 天相对 0 天的均值差值；24 天相对 12
+                天仅作尾段探索。模型间形状差异不直接等同于门店经营效果，更不代表时间的因果作用。
+              </dd>
+            </div>
+          </dl>
+          <h3>应用限制</h3><p>
+              固定四候选项、完整排序、无并列、独立试吃参与者及 IIA
+              是本例设定。真实研究若有候选集变化、重复测量、并列或选择性缺失，需要调整模型与方差估计。间隔天数变化与试吃参与者构成变化可能混杂；观察关联不自动代表口味记忆变化或门店经营效果。有限样本和模型设定也会影响区间覆盖率。
+            </p>
+          </div></details>
+          <details>
+            <summary>模型定义与间隔天数效应的识别</summary>
+            <div class="disclosure">
+              <p>
+                Rank-ordered Logit
+                将一次完整排序写为对剩余候选集合的顺序选择。本例与无并列的
+                Plackett–Luce
+                模型对应，采用最大似然估计，不是对四个名次分别拟合独立二元模型。
+              </p>
+              <code class="formula"
+                >P(r | X) = ∏ₛ exp(Vᵣₛ) / Σⱼ∈remaining(s) exp(Vⱼ)</code
+              >
+              <p>
+                香草口味效用为 α + f(间隔天数) + β ×
+                偏甜口味状态；巧克力冰激淋和草莓冰激淋各有一个常数，抹茶冰激淋常数固定为
+                0。间隔天数和偏甜口味状态仅作用于香草口味；若把共同间隔天数项同等加入所有候选，它会在概率中抵消，无法识别。
+              </p>
+              <p>
+                自然样条：边界 0/24 天，内节点 6/12/18 天，间隔天数基函数 4
+                个自由参数。线性：间隔天数/12。连续分段：间隔天数/12 与 max(间隔天数−9,
+                0)/12。节点在模拟拟合前固定，不根据展示曲线挑选。
+              </p>
+            </div>
+          </details>
+          <details>
+            <summary>排名百分位、置信区间与预测区间</summary>
+            <div class="disclosure">
+              <code class="formula">排名百分位 = 100 × (4 − rank) / 3</code>
+              <p>
+                预测均值可由完整排序分布求期望，也可用 PL
+                的成对先后概率求和得到，两种算法在本次计算中核对一致。均值按固定偏甜口味参与者比例标准化；50%
+                不对应某个必须穿过的间隔天数。
+              </p>
+              <p>
+                参数协方差取观测信息矩阵的逆。均值 CI 用 Delta
+                法与正态近似；间隔天数差值使用两时点梯度之差和完整联合协方差。主分析置信区间是逐点区间。尾段对比为探索，不用于另外宣称经过校正的多重发现。
+              </p>
+              <p>
+                个体预测分布通过枚举四项的 24 种完整排序得到；等尾 95%
+                预测区间在离散尺度上实际覆盖率可以超过
+                95%。此处参数估计视为给定，未把参数不确定性额外混入个体分布。
+              </p>
+            </div>
+          </details>
+          <details>
+            <summary>模拟、拟合与五折验证的复现口径</summary>
+            <div class="disclosure">
+              <p>
+                随机种子 7319。先模拟 0–24
+                天与二元偏甜口味状态，再按候选效用加独立标准 Gumbel
+                误差生成完整排序。数据生成机制本身含有非线性，因此验证结果只说明系统能否正确呈现该模拟场景，不能作为真实业务证据。
+              </p>
+              <p>
+                Python 使用 NumPy 与 SciPy，解析似然梯度、观测信息矩阵、BFGS
+                优化。所有模型的最大绝对得分小于
+                10⁻⁴，信息矩阵为正定。五折对试吃参与者划分并复用同一划分，表内 NLL
+                为五折均值；折间波动不被解释成独立样本的置信区间。
+              </p>
+              <p>
+                文件夹内提供模拟试吃参与者 CSV、完整拟合 JSON 与复现脚本
+                <code>data/simulate_and_fit.py</code>。HTML 使用同一 JSON
+                的内嵌副本，打开页面时不需要 Python 或联网。
+              </p>
+            </div>
+          </details>
+          <details id="parameter-details">
+            <summary>自然样条主分析：参数估计与 95% CI</summary>
+            <div class="disclosure">
+              <p>
+                参数位于潜在效用尺度。样条基系数不能单独当作“每天的优势比”；应联合转换为上方的排名百分位曲线。
+              </p>
+              <div
+                class="table-scroll"
+                role="region"
+                tabindex="0"
+                aria-label="自然样条参数估计表"
+              >
+                <table class="parameters-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">效用项</th>
+                      <th scope="col">估计值</th>
+                      <th scope="col">标准误</th>
+                      <th scope="col">95% CI</th>
+                      <th scope="col">Wald p</th>
+                    </tr>
+                  </thead>
+                  <tbody id="parameter-table"></tbody>
+                </table>
+              </div>
+            </div>
+          </details>
+          <div class="result-heading">
+            <div>
+              <h3>关键间隔天数的预测明细</h3>
+              <p id="prediction-table-model">
+                自然三次样条 · 均值区间与个体预测区间分列
+              </p>
+            </div>
+            <button class="export" id="export-csv">导出逐天 CSV ↓</button>
+          </div>
+          <p class="table-hint">左右滑动查看完整区间。</p>
+          <div
+            class="table-scroll"
+            role="region"
+            tabindex="0"
+            aria-label="关键间隔天数预测表"
+          >
+            <table class="prediction-table">
+              <thead>
+                <tr>
+                  <th scope="col">间隔天</th>
+                  <th scope="col">该天 n</th>
+                  <th scope="col">均值百分位</th>
+                  <th scope="col">均值 95% CI</th>
+                  <th scope="col">个体 95% 预测区间</th>
+                  <th scope="col">排在第 1 位概率</th>
+                </tr>
+              </thead>
+              <tbody id="prediction-table"></tbody>
+            </table>
+          </div>
+          <p class="table-note">区间单位为排名百分点；第 1 位概率与均值百分位是不同的量。CSV 包含所选模型的全部 25 个间隔天数。</p>
+
+          <div class="sources">
+            方法参考：<a
+              href="https://www.stata.com/manuals15/rrologit.pdf"
+              target="_blank"
+              rel="noreferrer"
+              >Stata · Rank-ordered Logit</a
+            ><a
+              href="https://search.r-project.org/CRAN/refmans/PlackettLuce/html/PlackettLuce-package.html"
+              target="_blank"
+              rel="noreferrer"
+              >R · Plackett–Luce 文档</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="wrap">
+        <div class="footer-line">
+          <strong>冰激淋口味研究</strong>
+        </div>
+        <p>模拟数据与复现脚本见方法详情。</p>
+      </div>
+    </footer>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+    <noscript
+      ><p class="wrap">
+        请启用 JavaScript 以读取预测曲线、统计表和交互。此文件不需要联网。
+      </p></noscript
+    >
+    <!-- ANALYSIS_DATA_START -->
+    <script id="analysis-data" type="application/json">
+{"simulation":true,"scenario":"fictional-ice-cream","timeUnit":"day","provenance":"Generated locally from RNG seed 7319; no external or company records","seed":7319,"n":1600,"nAlternatives":4,"informativeStages":4800,"events":["香草冰激淋","巧克力冰激淋","草莓冰激淋","抹茶冰激淋"],"activeShare":0.4425,"monthCounts":[140,123,132,98,109,90,81,77,67,71,73,61,73,43,43,47,44,47,27,38,28,24,32,13,19],"supportBins":[{"start":0,"end":2,"n":395},{"start":3,"end":5,"n":297},{"start":6,"end":8,"n":225},{"start":9,"end":11,"n":205},{"start":12,"end":14,"n":159},{"start":15,"end":17,"n":138},{"start":18,"end":20,"n":93},{"start":21,"end":24,"n":88}],"tailN":181,"models":[{"id":"linear","name":"线性间隔天数","k":5,"logLik":-4993.2707181377045,"aic":9996.541436275409,"cvNll":3.1248048124788004,"cvFoldSd":0.013826873973379715,"cvFolds":[3.1354601373540176,3.1308934044311107,3.1327606394122105,3.1235407202782257,3.101369160918436],"maxScore":4.744610748730338e-08,"parameters":[{"name":"香草口味常数（0天，非偏甜口味）","estimate":0.5860274453994699,"se":0.07266759043503705,"lo":0.44359896814679733,"hi":0.7284559226521425,"p":7.353900291347338e-16},{"name":"香草口味 × 偏甜口味参与者","estimate":0.17531547681614928,"se":0.07328437198548206,"lo":0.03167810772460444,"hi":0.3189528459076941,"p":0.016744847854198025},{"name":"巧克力冰激淋常数","estimate":0.23007181347051697,"se":0.04446274662948978,"lo":0.14292483007671702,"hi":0.3172187968643169,"p":2.285405244007949e-07},{"name":"草莓冰激淋常数","estimate":-0.11324168430782085,"se":0.04489217436967037,"lo":-0.20123034607237478,"hi":-0.025253022543266918,"p":0.011651528285763966},{"name":"间隔天数 / 12","estimate":-0.6800585306188665,"se":0.06934377162990657,"lo":-0.8159723230134833,"hi":-0.5441447382242496,"p":1.0498265973690252e-22}],"covariance":[[0.005280578699634288,-0.002445793712083231,0.0010216068346548227,0.0009586457260521287,-0.0032763696218623584],[-0.0024457937120832304,0.0053705991773065065,1.2943905482457007e-05,1.4914198547852326e-05,8.878748345129582e-05],[0.0010216068346548225,1.2943905482457082e-05,0.0019769358378382046,0.0009894833151282282,-3.1704555975259944e-05],[0.0009586457260521285,1.4914198547852479e-05,0.000989483315128228,0.0020153073196368895,2.3268567215331722e-05],[-0.0032763696218623584,8.878748345129584e-05,-3.1704555975259944e-05,2.3268567215331726e-05,0.004808558663860635]],"curve":[{"month":0.0,"mean":65.03377175326601,"se":1.3374507017006427,"lo":62.41236837793275,"hi":67.65517512859927,"rankProb":[0.3814436961355032,0.2987799291019978,0.20912220598747486,0.11065416877502401],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":140},{"month":0.25,"mean":64.71297999478543,"se":1.3173444024880825,"lo":62.13098496590879,"hi":67.29497502366208},{"month":0.5,"mean":64.39086473453246,"se":1.29725284485371,"lo":61.84824915861918,"hi":66.93348031044573},{"month":0.75,"mean":64.06744971669534,"se":1.2772032234792559,"lo":61.564131398676,"hi":66.57076803471467},{"month":1.0,"mean":63.74275913038589,"se":1.2572243540337469,"lo":61.27859939647975,"hi":66.20691886429204,"rankProb":[0.36818863474529434,0.2962976249329206,0.2151216198098521,0.12039212051193286],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":123},{"month":1.25,"mean":63.41681760402831,"se":1.2373467527348683,"lo":60.99161796866797,"hi":65.84201723938865},{"month":1.5,"mean":63.08965019944503,"se":1.2176027124363646,"lo":60.70314888306976,"hi":65.4761515158203},{"month":1.75,"mean":62.7612824056408,"se":1.1980263764019974,"lo":60.41315070789288,"hi":65.10941410338872},{"month":2.0,"mean":62.4317401322873,"se":1.1786538068754548,"lo":60.12157867081141,"hi":64.74190159376319,"rankProb":[0.35512940318740693,0.2933848089454682,0.22079437651546202,0.1306914113516629],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":132},{"month":2.25,"mean":62.10104970290994,"se":1.1595230453019691,"lo":59.82838453411808,"hi":64.3737148717018},{"month":2.5,"mean":61.769237847779756,"se":1.140674161769606,"lo":59.53351649071133,"hi":64.00495920484818},{"month":2.75,"mean":61.43633169651308,"se":1.1221492888048146,"lo":59.23691909045564,"hi":63.635744302570515},{"month":3.0,"mean":61.10235877038211,"se":1.103992636063308,"lo":58.93853320369803,"hi":63.26618433706619,"rankProb":[0.3422820781346644,0.29005885368622897,0.22610682133501192,0.1415522468440946],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":98},{"month":3.25,"mean":60.76734697434014,"se":1.0862504801629802,"lo":58.6382960332207,"hi":62.89639791545959},{"month":3.5,"mean":60.43132458876508,"se":1.0689711240136435,"lo":58.33614118569834,"hi":62.52650799183182},{"month":3.75,"mean":60.09432026092564,"se":1.0522048192625462,"lo":58.03199881517105,"hi":62.15664170668023},{"month":4.0,"mean":59.75636299617475,"se":1.0360036446131677,"lo":57.725795852732944,"hi":61.78693013961656,"rankProb":[0.3296615567428751,0.2863392813441099,0.2310276569683975,0.15297150494461753],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":109},{"month":4.25,"mean":59.41748214887482,"se":1.0204213338578176,"lo":57.417456334513496,"hi":61.41750796323614},{"month":4.5,"mean":59.07770741306055,"se":1.0055130454144021,"lo":57.10690184404832,"hi":61.04851298207278},{"month":4.75,"mean":58.73706881284444,"se":0.9913350680332185,"lo":56.79405207949933,"hi":60.68008554618955},{"month":5.0,"mean":58.39559669257089,"se":0.9779444563405888,"lo":56.478825558143335,"hi":60.31236782699845,"rankProb":[0.3172815070453597,0.28224752829369676,0.23552832305365407,0.16494264160728928],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":90},{"month":5.25,"mean":58.05332170672536,"se":0.9653985930364984,"lo":56.16114046437383,"hi":59.9455029490769},{"month":5.5,"mean":57.7102748096048,"se":0.9537546758344324,"lo":55.84091564496931,"hi":59.57963397424029},{"month":5.75,"mean":57.3664872447563,"se":0.9430691321437941,"lo":55.51807174575446,"hi":59.21490274375814},{"month":6.0,"mean":57.021990534191026,"se":0.9333969659793382,"lo":55.19253248087152,"hi":58.85144858751053,"rankProb":[0.3051543315163668,0.27780669308918465,0.23958333529826137,0.1774556400961873],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":81},{"month":6.25,"mean":56.67681646738082,"se":0.9247910483989744,"lo":54.86422601251883,"hi":58.48940692224281},{"month":6.5,"mean":56.330997090045216,"se":0.917301366180658,"lo":54.53308641233112,"hi":58.12890776775931},{"month":6.75,"mean":55.984564692736754,"se":0.9109742493915762,"lo":54.199055163929266,"hi":57.77007422154424},{"month":7.0,"mean":55.637551799232824,"se":0.9058516014494845,"lo":53.862082660391835,"hi":57.413020938073814,"rankProb":[0.2932911435987274,0.27304127276953166,0.24317057764173905,0.1904970059900018],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":77},{"month":7.25,"mean":55.28999115474258,"se":0.9019701604279781,"lo":53.522129640303746,"hi":57.057852669181415},{"month":7.5,"mean":54.94191571393758,"se":0.8993608208657631,"lo":53.179168505040685,"hi":56.70466292283448},{"month":7.75,"mean":54.59335862881517,"se":0.8980480456837606,"lo":52.833184459274996,"hi":56.35353279835534},{"month":8.0,"mean":54.24435323640371,"se":0.898049395572392,"lo":52.48417642108182,"hi":56.0045300517256,"rankProb":[0.2817017567886699,0.2679768923596468,0.24627154200680812,0.2040498088448752],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":67},{"month":8.25,"mean":53.89493304631924,"se":0.8993751988122368,"lo":52.13215765664725,"hi":55.657708435991225},{"month":8.5,"mean":53.54513172818287,"se":0.9020283775967182,"lo":51.7771561080933,"hi":55.31310734827243},{"month":8.75,"mean":53.19498309890911,"se":0.9060044390182127,"lo":51.41921439843342,"hi":54.97075179938481},{"month":9.0,"mean":52.84452110987462,"se":0.9112916303741462,"lo":51.05838951434129,"hi":54.63065270540795,"rankProb":[0.2703946856906406,0.26264003234717903,0.24887151152995832,0.21809377043222195],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":71},{"month":9.25,"mean":52.49377983397794,"se":0.9178712494933523,"lo":50.694752184970966,"hi":54.29280748298491},{"month":9.5,"mean":52.142793452600344,"se":0.9257180931577533,"lo":50.32838599001115,"hi":53.95720091518954},{"month":9.75,"mean":51.791596242477965,"se":0.9348010204041519,"lo":49.95938624248583,"hi":53.6238062424701},{"month":10.0,"mean":51.440222562496324,"se":0.9450836037150737,"lo":49.58785869921478,"hi":53.29258642577787,"rankProb":[0.25937715830022684,0.2570577586910779,0.2509596845920532,0.23260539841664202],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":73},{"month":10.25,"mean":51.08870684041719,"se":0.9565248385157634,"lo":49.21391815692629,"hi":52.96349552390809},{"month":10.5,"mean":50.73708355954922,"se":0.9690798826262397,"lo":48.83768698960179,"hi":52.63648012949665},{"month":10.75,"mean":50.38538724537264,"se":0.982700798171617,"lo":48.45929368095627,"hi":52.31148080978901},{"month":11.0,"mean":50.033652452129175,"se":0.9973372733233354,"lo":48.07887139641544,"hi":51.98843350784291,"rankProb":[0.24865513864572142,0.2512574595913911,0.2525292384439287,0.24755816331895872],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":61},{"month":11.25,"mean":49.68191374938811,"se":1.0129373041385603,"lo":47.69655663327653,"hi":51.66727086549969},{"month":11.5,"mean":49.330205708599266,"se":1.0294478228925505,"lo":47.312487975729866,"hi":51.347923441468666},{"month":11.75,"mean":48.978562889644245,"se":1.0468152626001848,"lo":46.926804974947885,"hi":51.030320804340604},{"month":12.0,"mean":48.627019827396495,"se":1.0649860530362065,"lo":46.53964716344553,"hi":50.71439249134746,"rankProb":[0.23823335881939706,0.24526659283738012,0.25357733268894334,0.26292271565427944],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":73},{"month":12.25,"mean":48.275611018301554,"se":1.0839070461065365,"lo":46.151153207932744,"hi":50.40006882867036},{"month":12.5,"mean":47.92437090698817,"se":1.1035258720945182,"lo":45.761460197682915,"hi":50.08728161629343},{"month":12.75,"mean":47.573333872921424,"se":1.1237912304204123,"lo":45.37070306129742,"hi":49.77596468454543},{"month":13.0,"mean":47.222534217108425,"se":1.1446531197708647,"lo":44.97901410235753,"hi":49.46605433185932,"rankProb":[0.22811535935808058,0.23911244707227788,0.254105054294455,0.2786671392751864],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":43},{"month":13.25,"mean":46.87200614886767,"se":1.1660630140707458,"lo":44.58652264128901,"hi":49.15748965644633},{"month":13.5,"mean":46.52178377267255,"se":1.1879739902557418,"lo":44.193354751771295,"hi":48.8502127935738},{"month":13.75,"mean":46.17190107507973,"se":1.2103408151281114,"lo":43.79963307742863,"hi":48.54416907273083},{"month":14.0,"mean":45.822391911752675,"se":1.2331199969531046,"lo":43.40547671772459,"hi":48.23930710578076,"rankProb":[0.21830353688822615,0.2328219197879909,0.2541173071119194,0.29475723621186334],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":43},{"month":14.25,"mean":45.47328999459095,"se":1.2562698082760024,"lo":43.01100117036999,"hi":47.93557881881191},{"month":14.5,"mean":45.124628878975315,"se":1.2797502850580484,"lo":42.61631832026154,"hi":47.63293943768909},{"month":14.75,"mean":44.776441951138644,"se":1.3035232070217941,"lo":42.22153646537593,"hi":47.33134743690136},{"month":15.0,"mean":44.42876241567265,"se":1.3275520633348863,"lo":41.826760371536274,"hi":47.03076445980903,"rankProb":[0.20879919793174875,0.2264213143116589,0.25362265005161555,0.31115683770497665],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":47},{"month":15.25,"mean":44.081623283180065,"se":1.351802007404007,"lo":41.43209134866821,"hi":46.73115521769192},{"month":15.5,"mean":43.735057358081654,"se":1.3762398033711942,"lo":41.037627343474114,"hi":46.432487372689195},{"month":15.75,"mean":43.38909722658762,"se":1.4008337674123656,"lo":40.64346304245939,"hi":46.13473141071586},{"month":16.0,"mean":43.043775244842095,"se":1.4255537054206977,"lo":40.249689982217525,"hi":45.837860507466665,"rankProb":[0.19960261777319174,0.21993615748715048,0.2526330890513868,0.327828135688271],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":44},{"month":16.25,"mean":42.69912352724993,"se":1.4503708487722982,"lo":39.85639666365623,"hi":45.541850390843635},{"month":16.5,"mean":42.355173934994056,"se":1.4752577900034731,"lo":39.463668666587246,"hi":45.246679203400866},{"month":16.75,"mean":42.01195806475195,"se":1.5001884184385963,"lo":39.0715887646123,"hi":44.9523273648916},{"month":17.0,"mean":41.669507237619214,"se":1.5251378577966894,"lo":38.6802370363377,"hi":44.65877743890073,"rankProb":[0.19071310331374905,0.21339103920554675,0.25116382877623566,0.3447320287044684],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":47},{"month":17.25,"mean":41.327852488248084,"se":1.5500824050967383,"lo":38.28969097425848,"hi":44.36601400223769},{"month":17.5,"mean":40.98702455420829,"se":1.5749994723081697,"lo":37.900025588484276,"hi":44.074023519932304},{"month":17.75,"mean":40.647053865577746,"se":1.599867530288961,"lo":37.51131350621138,"hi":43.78279422494411},{"month":18.0,"mean":40.307970534769666,"se":1.6246660556560166,"lo":37.123625065683875,"hi":43.49231600385546,"rankProb":[0.1821290588803272,0.20680947441448672,0.24923299057313483,0.36182847613205116],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":27},{"month":18.25,"mean":39.9698043466031,"se":1.6493754803594685,"lo":36.73702840509854,"hi":43.202580288107654},{"month":18.5,"mean":39.63258474862286,"se":1.6739771444316027,"lo":36.35158954553692,"hi":42.913579951708805},{"month":18.75,"mean":39.29634084167512,"se":1.6984532510361297,"lo":35.9673724696443,"hi":42.62530921370593},{"month":19.0,"mean":38.96110137074419,"se":1.7227868247145603,"lo":35.58443919430365,"hi":42.33776354718473,"rankProb":[0.17384805401518452,0.20021378774942808,0.24686130357791597,0.37907685465747126],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":38},{"month":19.25,"mean":38.62689471605596,"se":1.7469616724001904,"lo":35.202849838151586,"hi":42.05093959396033},{"month":19.5,"mean":38.29374888445288,"se":1.7709623463710251,"lo":34.822662685565675,"hi":41.76483508334009},{"month":19.75,"mean":37.96169150104532,"se":1.7947741104620285,"lo":34.44393424453975,"hi":41.4794487575509},{"month":20.0,"mean":37.630749801143594,"se":1.8183829078878149,"lo":34.06671930168348,"hi":41.19478030060371,"rankProb":[0.16586689234064877,0.19362502049018987,0.24407177603198202,0.3964363111371794],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":28},{"month":20.25,"mean":37.300950622474616,"se":1.8417753315653584,"lo":33.69107097260651,"hi":40.91083027234272},{"month":20.5,"mean":36.972320397686914,"se":1.864938596555069,"lo":33.31704074843898,"hi":40.62760004693485},{"month":20.75,"mean":36.6448851471474,"se":1.8878605141019027,"lo":32.94467853950767,"hi":40.34509175478713},{"month":21.0,"mean":36.318670472032736,"se":1.9105294676324658,"lo":32.5740327154731,"hi":40.06330822859237,"rankProb":[0.15818168067100472,0.18706285916055695,0.2408893538268538,0.41386610634158427],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":24},{"month":21.25,"mean":35.993701547718004,"se":1.9329343903077685,"lo":32.20515014271478,"hi":39.78225295272123},{"month":21.5,"mean":35.67000311746503,"se":1.9550647441243982,"lo":31.838076218981207,"hi":39.50193001594885},{"month":21.75,"mean":35.347599486412264,"se":1.9769105004887826,"lo":31.47285490545425,"hi":39.22234406737028},{"month":22.0,"mean":35.02651451586786,"se":1.998462121835417,"lo":31.109528757070443,"hi":38.943500274665276,"rankProb":[0.15078789762705533,0.18054558476157923,0.23734057307171125,0.4313259445396541],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":32},{"month":22.25,"mean":34.706771617907165,"se":2.019710544654858,"lo":30.748138950383645,"hi":38.66540428543069},{"month":22.5,"mean":34.38839375027576,"se":2.040647163501345,"lo":30.388725309813125,"hi":38.388062190738395},{"month":22.75,"mean":34.071403411598396,"se":2.061263815990848,"lo":30.031326332256334,"hi":38.11148049094046},{"month":23.0,"mean":33.75582263689437,"se":2.0815527687964033,"lo":29.67597921005342,"hi":37.835666063735324,"rankProb":[0.1436804610955034,0.17409004136229053,0.23345321309573994,0.44877628444646606],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":13},{"month":23.25,"mean":33.44167299339912,"se":2.1015067043126705,"lo":29.32271985294629,"hi":37.560626133851954},{"month":23.5,"mean":33.128975576691836,"se":2.1211187082439382,"lo":28.97158290853372,"hi":37.28636824484995},{"month":23.75,"mean":32.81775100712822,"se":2.140382257889749,"lo":28.622601781664315,"hi":37.01290023259213},{"month":24.0,"mean":32.50801942657775,"se":2.159291210704492,"lo":28.27580865359694,"hi":36.74023019955855,"rankProb":[0.13685379396288244,0.16771162256455252,0.2292559557795802,0.46617862769298485],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":19}],"contrast12vs0":{"estimate":-16.406751925869514,"se":1.6194393201234734,"lo":-19.580852993311524,"hi":-13.232650858427506,"p":4.01972663861472e-24},"contrast24vs12":{"estimate":-16.11900040081875,"se":1.4486251501115237,"lo":-18.958305695037335,"hi":-13.279695106600162,"p":9.259672850622131e-29},"deltaAic":5.966649815327401},{"id":"spline","name":"自然三次样条","k":8,"logLik":-4987.287393230041,"aic":9990.574786460082,"cvNll":3.1236434156175585,"cvFoldSd":0.013665604834598773,"cvFolds":[3.142647888847736,3.12376532082121,3.1273238130519094,3.1197296979138875,3.104750357453047],"maxScore":2.1816084405656966e-07,"parameters":[{"name":"香草口味常数（0天，非偏甜口味）","estimate":0.7220148309395084,"se":0.10171790085798597,"lo":0.5226477452578558,"hi":0.9213819166211609,"p":1.2638475731923694e-12},{"name":"香草口味 × 偏甜口味参与者","estimate":0.18017725304045396,"se":0.07343500337632355,"lo":0.036244646422859794,"hi":0.3241098596580481,"p":0.014144958541308837},{"name":"巧克力冰激淋常数","estimate":0.2300386679089041,"se":0.04448751634790852,"lo":0.1428431358670034,"hi":0.3172341999508048,"p":2.3302052487353166e-07},{"name":"草莓冰激淋常数","estimate":-0.11299339972648853,"se":0.04490245900828134,"lo":-0.20100221938271995,"hi":-0.024984580070257112,"p":0.011855415711118535},{"name":"样条基 B₁（天）","estimate":-0.540503953650607,"se":0.13148958239199474,"lo":-0.7982235351389166,"hi":-0.2827843721622973,"p":3.94594937614479e-05},{"name":"样条基 B₂（天）","estimate":-0.9167578051795982,"se":0.11457525897156878,"lo":-1.141325312763873,"hi":-0.6921902975953234,"p":1.230532188093561e-15},{"name":"样条基 B₃（天）","estimate":-1.2015836739414483,"se":0.1477589491123768,"lo":-1.4911912142017067,"hi":-0.9119761336811898,"p":4.220785759137982e-16},{"name":"样条基 B₄（天）","estimate":-0.8882269772393756,"se":0.23639471545967947,"lo":-1.3515606195403473,"hi":-0.42489333493840387,"p":0.0001716952722168255}],"covariance":[[0.010346531354955063,-0.0024581736021607272,0.0010165336229258975,0.0009517292348420612,-0.01059402331859665,-0.007419366410483148,-0.009334864404996982,-0.007842927553881412],[-0.002458173602160729,0.005392699720880651,1.2424231561143915e-05,1.5058848789766263e-05,6.452072464289807e-05,9.384519505206301e-05,-2.3294003897256145e-05,0.0006645101468759116],[0.001016533622925898,1.242423156114384e-05,0.0019791391108054278,0.0009903818308165102,-3.008899228034626e-06,-3.4340965162132595e-05,-3.7904100266039295e-05,-5.063048523532439e-05],[0.0009517292348420612,1.5058848789766337e-05,0.0009903818308165102,0.0020162308249903863,2.672917868349018e-05,2.9049028828548953e-05,3.031477766599662e-05,8.014860763266633e-05],[-0.010594023318596648,6.452072464289495e-05,-3.0088992280340302e-06,2.6729178683490473e-05,0.017289510277621174,0.008743941970609733,0.011857745668999674,0.008819723751583505],[-0.007419366410483149,9.38451950520614e-05,-3.4340965162132155e-05,2.9049028828549156e-05,0.008743941970609735,0.013127489968402052,0.007250789987391727,0.008056342435176923],[-0.009334864404996979,-2.3294003897258805e-05,-3.790410026603886e-05,3.031477766599683e-05,0.011857745668999671,0.0072507899873917245,0.021832707042793956,0.0034657568180221105],[-0.007842927553881414,0.0006645101468759101,-5.063048523532403e-05,8.014860763266648e-05,0.008819723751583507,0.008056342435176923,0.0034657568180221114,0.05588246149726282]],"curve":[{"month":0.0,"mean":68.08449716408484,"se":1.9994375919828506,"lo":64.16559948379845,"hi":72.00339484437123,"rankProb":[0.4144596924809172,0.30290437542494847,0.19334708662989694,0.08928884546423758],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":140},{"month":0.25,"mean":67.552604522879,"se":1.8756289213490227,"lo":63.87637183703491,"hi":71.22883720872308},{"month":0.5,"mean":67.01662843913806,"se":1.7561494318153386,"lo":63.57457555278,"hi":70.45868132549613},{"month":0.75,"mean":66.47714504876774,"se":1.6431225410392045,"lo":63.256624868330896,"hi":69.69766522920457},{"month":1.0,"mean":65.93474875758331,"se":1.53892384242499,"lo":62.91845802643033,"hi":68.95103948873628,"rankProb":[0.39096543484252183,0.30023805058190267,0.20467005703612856,0.10412645753944698],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":123},{"month":1.25,"mean":65.39005112831198,"se":1.4461270312106034,"lo":62.555642147139196,"hi":68.22446010948477},{"month":1.5,"mean":64.84367967410361,"se":1.3673672323117219,"lo":62.16363989877264,"hi":67.52371944943458},{"month":1.75,"mean":64.29627656835214,"se":1.3050923128631624,"lo":61.73829563514035,"hi":66.85425750156394},{"month":2.0,"mean":63.748497281640184,"se":1.2612052926669712,"lo":61.27653490801292,"hi":66.22045965526745,"rankProb":[0.3682756709795746,0.29628103225371977,0.21506584100304263,0.12037745576366303],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":132},{"month":2.25,"mean":63.201009157511955,"se":1.2366678202789068,"lo":60.777140229765294,"hi":65.62487808525862},{"month":2.5,"mean":62.65448993953683,"se":1.2312036021564654,"lo":60.241330879310155,"hi":65.0676489997635},{"month":2.75,"mean":62.10962626273475,"se":1.243242639601344,"lo":59.67287068911612,"hi":64.54638183635339},{"month":3.0,"mean":61.56711212288167,"se":1.270146300831485,"lo":59.077625373251955,"hi":64.05659887251137,"rankProb":[0.34675782480490164,0.29123606989107104,0.22426774948960304,0.13773835581442426],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":98},{"month":3.25,"mean":61.027647337491544,"se":1.3086158211623018,"lo":58.46276032801343,"hi":63.59253434696966},{"month":3.5,"mean":60.49193601237383,"se":1.3551231940847486,"lo":57.83589455196772,"hi":63.147977472779935},{"month":3.75,"mean":59.96068502759152,"se":1.4062440879804416,"lo":57.204446615149855,"hi":62.71692344003319},{"month":4.0,"mean":59.4346025563937,"se":1.458855388731453,"lo":56.57524599448005,"hi":62.29395911830735,"rankProb":[0.3267281085424685,0.28537672907003014,0.23210029292434517,0.15579486946315615],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":109},{"month":4.25,"mean":58.91439663027491,"se":1.510219798089654,"lo":55.954365826019185,"hi":61.87442743453063},{"month":4.5,"mean":58.40077376272699,"se":1.557999809447847,"lo":55.347094136209215,"hi":61.45445338924477},{"month":4.75,"mean":57.89443764350959,"se":1.6002383950143182,"lo":54.757970389281525,"hi":61.030904897737656},{"month":5.0,"mean":57.39608791438387,"se":1.635331451015635,"lo":54.19083827039322,"hi":60.60133755837452,"rankProb":[0.3084480472356579,0.2790236092259099,0.2384912772727224,0.1740370662657096],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":90},{"month":5.25,"mean":56.90641903624761,"se":1.662006569997838,"lo":53.64888615905185,"hi":60.16395191344338},{"month":5.5,"mean":56.42611925649324,"se":1.679316368433207,"lo":53.13465917436415,"hi":59.71757933862232},{"month":5.75,"mean":55.95586968420221,"se":1.686651880428507,"lo":52.65003199856234,"hi":59.261707369842085},{"month":6.0,"mean":55.49634347950798,"se":1.683781369018246,"lo":52.19613199623222,"hi":58.79655496278374,"rankProb":[0.29212670557525,0.2725198891102092,0.243470409439071,0.1918829958754698],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":81},{"month":6.25,"mean":55.04798362805768,"se":1.6711792550901867,"lo":51.77247228808091,"hi":58.323494968034446},{"month":6.5,"mean":54.61033476521551,"se":1.6507902118499151,"lo":51.37478594998968,"hi":57.845883580441345},{"month":6.75,"mean":54.18270322051242,"se":1.625097617113364,"lo":50.99751189097023,"hi":57.367894550054615},{"month":7.0,"mean":53.76437973230516,"se":1.5967902088207873,"lo":50.634670923016415,"hi":56.8940885415939,"rankProb":[0.27781241807500284,0.26615572136978227,0.24718269500458181,0.2088491655506332],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":77},{"month":7.25,"mean":53.354641339383576,"se":1.5686870614364707,"lo":50.280014698968095,"hi":56.42926797979906},{"month":7.5,"mean":52.95275310902937,"se":1.5436282131594796,"lo":49.92724181123679,"hi":55.97826440682196},{"month":7.75,"mean":52.55796971622735,"se":1.5243217774709892,"lo":49.570299032384206,"hi":55.54564040007049},{"month":8.0,"mean":52.16953688870115,"se":1.5131506371885524,"lo":49.20376163981159,"hi":55.13531213759072,"rankProb":[0.26508332253094596,0.25996754076235773,0.24990105754348088,0.22504807916321526],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":67},{"month":8.25,"mean":51.78669273230652,"se":1.5119608083309803,"lo":48.823249547977795,"hi":54.750135916635244},{"month":8.5,"mean":51.408668951100964,"se":1.5218727528365628,"lo":48.4257983555413,"hi":54.391539546660624},{"month":8.75,"mean":51.0346919761487,"se":1.5431641325921193,"lo":48.010090276268144,"hi":54.059293676029256},{"month":9.0,"mean":50.66398401683807,"se":1.575258137338773,"lo":47.57647806765408,"hi":53.75148996602206,"rankProb":[0.253445370739039,0.25386623758219934,0.2518509331236264,0.24083745855513522],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":71},{"month":9.25,"mean":50.29576404820688,"se":1.6168192350999688,"lo":47.12679834741094,"hi":53.464729749002814},{"month":9.5,"mean":49.929248747506094,"se":1.6659252926971295,"lo":46.66403517381972,"hi":53.19446232119247},{"month":9.75,"mean":49.563653392997736,"se":1.7202690846127475,"lo":46.19192598715675,"hi":52.93538079883872},{"month":10.0,"mean":49.19819273778987,"se":1.7773475734561608,"lo":45.71459149381579,"hi":52.681793981763946,"rankProb":[0.2424521300013248,0.2477072300483297,0.25317493203306174,0.25666570791728366],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":73},{"month":10.25,"mean":48.83208187136781,"se":1.8346150897338445,"lo":45.236236295489476,"hi":52.42792744724615},{"month":10.5,"mean":48.46453708139039,"se":1.8895947848584256,"lo":44.76093130306788,"hi":52.1681428597129},{"month":10.75,"mean":48.09477672828716,"se":1.939954762098815,"lo":44.29246539457348,"hi":51.89708806200083},{"month":11.0,"mean":47.72202214521561,"se":1.9835604971266794,"lo":43.83424357084732,"hi":51.6098007195839,"rankProb":[0.23170298412387844,0.24130731499631522,0.25393708199220266,0.2730526188876037],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":61},{"month":11.25,"mean":47.345498576013384,"se":2.0185159594741475,"lo":43.38920729544405,"hi":51.301789856582715},{"month":11.5,"mean":46.96443616390596,"se":2.043204941374767,"lo":42.95975447881142,"hi":50.9691178490005},{"month":11.75,"mean":46.578071003894465,"se":2.05634335716524,"lo":42.547638023850595,"hi":50.608503983938334},{"month":12.0,"mean":46.18564627194273,"se":2.0570537013364674,"lo":42.15382101732325,"hi":50.21747152656221,"rankProb":[0.22084392875035938,0.2344568273203554,0.25412394726649307,0.29057529666279214],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":73},{"month":12.25,"mean":45.78687964181579,"se":2.0453829336396416,"lo":41.777929091882086,"hi":49.79583019174949},{"month":12.5,"mean":45.38335786879105,"se":2.0235423473935024,"lo":41.41721486789979,"hi":49.349500869682316},{"month":12.75,"mean":44.97712837521641,"se":1.9945042011828151,"lo":41.06790014089809,"hi":48.88635660953473},{"month":13.0,"mean":44.57022913753044,"se":1.9614947906745712,"lo":40.72569934780828,"hi":48.4147589272526,"rankProb":[0.20977190474826612,0.22706710253538184,0.2536569548103509,0.30950403790600106],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":43},{"month":13.25,"mean":44.164685942124436,"se":1.9279013508845533,"lo":40.385999294390714,"hi":47.94337258985816},{"month":13.5,"mean":43.762509779792374,"se":1.8971454036412931,"lo":40.04410478865544,"hi":47.48091477092931},{"month":13.75,"mean":43.36569447001905,"se":1.8725110111168686,"lo":39.69557288822999,"hi":47.03581605180811},{"month":14.0,"mean":42.9762146031683,"se":1.8569293128171283,"lo":39.33663315004673,"hi":46.615796056289874,"rankProb":[0.19917871319650027,0.21960819101880966,0.25253391646792905,0.328679179316761],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":43},{"month":14.25,"mean":42.59602388336684,"se":1.852740736084077,"lo":38.96465204064205,"hi":46.22739572609163},{"month":14.5,"mean":42.22705394772693,"se":1.8614774996394152,"lo":38.57855804843368,"hi":45.87554984702018},{"month":14.75,"mean":41.8712137287389,"se":1.8837192411816417,"lo":38.17912401602288,"hi":45.56330344145492},{"month":15.0,"mean":41.530389416433934,"se":1.9190626959752126,"lo":37.76902653232252,"hi":45.29175230054535,"rankProb":[0.18984357819702025,0.2127151599220429,0.2509506280578716,0.34649063382306533],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":47},{"month":15.25,"mean":41.20644506552031,"se":1.9662135853185478,"lo":37.35266643829596,"hi":45.060223692744664},{"month":15.5,"mean":40.90122388036675,"se":2.0231717162749616,"lo":36.93580731646782,"hi":44.86664044426568},{"month":15.75,"mean":40.61655019765864,"se":2.0874585569096156,"lo":36.52513142611579,"hi":44.70796896920149},{"month":16.0,"mean":40.35423217295142,"se":2.1563380663870415,"lo":36.127809562832816,"hi":44.580654783070024,"rankProb":[0.18243403281120818,0.20702770807740165,0.24926945060011463,0.3612688085112754],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":44},{"month":16.25,"mean":40.11606516330271,"se":2.2269991439697243,"lo":35.75114684112205,"hi":44.480983485483364},{"month":16.5,"mean":39.90383578371894,"se":2.296688824664496,"lo":35.402325687376525,"hi":44.405345880061354},{"month":16.75,"mean":39.71932660026156,"se":2.36280051729099,"lo":35.08823758637122,"hi":44.3504156141519},{"month":17.0,"mean":39.56432140718838,"se":2.4229290699416204,"lo":34.815380430102806,"hi":44.313262384273955,"rankProb":[0.17754781258960647,0.2031712688538715,0.247943666739089,0.37133725181743293],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":47},{"month":17.25,"mean":39.440611019225706,"se":2.474906304919572,"lo":34.58979466158335,"hi":44.291427376868064},{"month":17.5,"mean":39.34999949264443,"se":2.516829858027961,"lo":34.417012970909624,"hi":44.28298601437923},{"month":17.75,"mean":39.29431066981221,"se":2.547096926892019,"lo":34.30200069310386,"hi":44.28662064652057},{"month":18.0,"mean":39.27539492077783,"se":2.5644542033405258,"lo":34.2490646822304,"hi":44.30172515932526,"rankProb":[0.1757782856138155,0.20175377752626372,0.24741943572936076,0.37504850113056004],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":27},{"month":18.25,"mean":39.29455041366343,"se":2.5684398803677198,"lo":34.260408248142696,"hi":44.328692579184164},{"month":18.5,"mean":39.350770792625895,"se":2.5605433645471325,"lo":34.33210579811352,"hi":44.36943578713827},{"month":18.75,"mean":39.44249842063856,"se":2.5431111397755695,"lo":34.45800058667844,"hi":44.42699625459868},{"month":19.0,"mean":39.56820393484185,"se":2.5189971519985934,"lo":34.6309695169246,"hi":44.50543835275909,"rankProb":[0.1775716552266136,0.20319029210987627,0.24795056814566177,0.37128748451784827],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":38},{"month":19.25,"mean":39.72638018902252,"se":2.491590440074735,"lo":34.842862926476045,"hi":44.609897451569},{"month":19.5,"mean":39.915536233372634,"se":2.4648307519363866,"lo":35.08446795957732,"hi":44.74660450716795},{"month":19.75,"mean":40.13419144713478,"se":2.443183383624789,"lo":35.3455520152302,"hi":44.92283087903937},{"month":20.0,"mean":40.380869924170845,"se":2.431538275852041,"lo":35.61505490350085,"hi":45.14668494484084,"rankProb":[0.18260005647084848,0.20715725875620497,0.24931141080017002,0.3609312739727764],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999998,"n":28},{"month":20.25,"mean":40.654095197718334,"se":2.4350004076579723,"lo":35.88149439870871,"hi":45.42669599672796},{"month":20.5,"mean":40.952385378164834,"se":2.4585585910264016,"lo":36.133610539753086,"hi":45.77116021657658},{"month":20.75,"mean":41.27424876617435,"se":2.506662819864051,"lo":36.36118963924081,"hi":46.18730789310789},{"month":21.0,"mean":41.618179992603984,"se":2.58279421819249,"lo":36.555903324946705,"hi":46.680456660261264,"rankProb":[0.19040319515987786,0.2131369057749321,0.2510620027486219,0.34539789631656814],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":24},{"month":21.25,"mean":41.98265672608183,"se":2.689143547235365,"lo":36.71193537350051,"hi":47.25337807866315},{"month":21.5,"mean":42.36613697867561,"se":2.826491883279351,"lo":36.82621288744809,"hi":47.90606106990314},{"month":21.75,"mean":42.767057029629854,"se":2.9943136342669954,"lo":36.898202306466544,"hi":48.63591175279316},{"month":22.0,"mean":43.18382997661779,"se":3.191042269242761,"lo":36.92938712890198,"hi":49.438272824333595,"rankProb":[0.20054027422905688,0.2205884015498718,0.2527172735116193,0.3261540507094519],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":32},{"month":22.25,"mean":43.61484491333785,"se":3.4144002937148157,"lo":36.92262033765681,"hi":50.307069489018886},{"month":22.5,"mean":44.05846672163466,"se":3.661707265198185,"lo":36.881520481846216,"hi":51.2354129614231},{"month":22.75,"mean":44.51303645574492,"se":3.930118764926989,"lo":36.810003676488016,"hi":52.21606923500182},{"month":23.0,"mean":44.9768722859079,"se":4.21678649474884,"lo":36.711970756200174,"hi":53.24177381561563,"rankProb":[0.2125265130288958,0.22894415039348942,0.2538383287035709,0.30469100787404385],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":13},{"month":23.25,"mean":45.448270958619204,"se":4.518951528583221,"lo":36.591125962596095,"hi":54.305415954642314},{"month":23.5,"mean":45.925509721450894,"se":4.833989924183795,"lo":36.450889470050654,"hi":55.40012997285113},{"month":23.75,"mean":46.4068486518277,"se":5.159428524423894,"lo":36.294368743956866,"hi":56.519328559698536},{"month":24.0,"mean":46.8905333216554,"se":5.492944288115479,"lo":36.12436251694906,"hi":57.65670412636173,"rankProb":[0.22578536923806702,0.23762254005646868,0.25411481182252343,0.2824772788829407],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":0.9999999999999999,"n":19}],"contrast12vs0":{"estimate":-21.898850892142107,"se":2.637541669681918,"lo":-27.068432564718666,"hi":-16.72926921956555,"p":1.0172820846711532e-16},"contrast24vs12":{"estimate":0.7048870497126671,"se":5.68647921617268,"lo":-10.440612213985785,"hi":11.85038631341112,"p":0.9013481872629199},"deltaAic":0.0},{"id":"piecewise","name":"连续分段线性","k":6,"logLik":-4989.615270998747,"aic":9991.230541997495,"cvNll":3.1226162364196983,"cvFoldSd":0.01177495102243511,"cvFolds":[3.1333725294136094,3.1263993674796304,3.1298971401929485,3.1198765392535073,3.103535605758797],"maxScore":5.831582168269733e-07,"parameters":[{"name":"香草口味常数（0天，非偏甜口味）","estimate":0.7129528792246654,"se":0.08635265368791617,"lo":0.5437016779963497,"hi":0.8822040804529812,"p":1.5026547764713252e-16},{"name":"香草口味 × 偏甜口味参与者","estimate":0.17489307381616734,"se":0.07335572678436249,"lo":0.031115849318816863,"hi":0.3186702983135178,"p":0.017117343567536164},{"name":"巧克力冰激淋常数","estimate":0.23013430689769637,"se":0.04447524402343919,"lo":0.14296282861175558,"hi":0.31730578518363717,"p":2.2860036346250584e-07},{"name":"草莓冰激淋常数","estimate":-0.11322691179343261,"se":0.044896206717013165,"lo":-0.2012234769587784,"hi":-0.025230346628086806,"p":0.01166994731371948},{"name":"间隔天数 / 12","estimate":-1.0723793417520455,"se":0.16106189932557757,"lo":-1.3880606644301776,"hi":-0.7566980190739134,"p":2.7723648638190165e-11},{"name":"max(间隔天数 − 9, 0) / 12","estimate":0.7210246209342054,"se":0.26645511642889724,"lo":0.19877259273356684,"hi":1.243276649134844,"p":0.006810129642717096}],"covariance":[[0.007456780798945183,-0.0024519501067874266,0.0010245794624864728,0.0009589823732475127,-0.010049440696595219,0.012510615310673164],[-0.0024519501067874275,0.005381062652062037,1.2651391691145884e-05,1.4705634351126363e-05,9.176164764287077e-05,1.758008660376786e-07],[0.001024579462486473,1.2651391691145958e-05,0.0019780473309444634,0.0009898881154740229,-3.914492915544089e-05,1.3900725292087649e-05],[0.0009589823732475128,1.470563435112651e-05,0.0009898881154740229,0.0020156693775767783,2.413859478631371e-05,-2.442378338898907e-06],[-0.010049440696595212,9.176164764286969e-05,-3.914492915543999e-05,2.413859478631411e-05,0.025940935414362487,-0.03888068426406987],[0.012510615310673153,1.758008660381834e-07,1.3900725292086443e-05,-2.442378338899434e-06,-0.03888068426406986,0.07099832907113719]],"curve":[{"month":0.0,"mean":67.84046071450307,"se":1.6335084675140896,"lo":64.63878411817545,"hi":71.04213731083068,"rankProb":[0.4116982867873155,0.302703421668023,0.1947121177370995,0.09088617380756207],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":140},{"month":0.25,"mean":67.35412689847412,"se":1.5863203702861897,"lo":64.24493897271319,"hi":70.46331482423506},{"month":0.5,"mean":66.86405309092414,"se":1.5391428873439574,"lo":63.84733303172999,"hi":69.8807731501183},{"month":0.75,"mean":66.37031764069542,"se":1.4921637899206268,"lo":63.44567661245099,"hi":69.29495866893984},{"month":1.0,"mean":65.87300185302581,"se":1.445595101418671,"lo":63.039635454245214,"hi":68.70636825180641,"rankProb":[0.3902761076017241,0.30017632718277637,0.20500907842004956,0.1045384867954501],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":123},{"month":1.25,"mean":65.37218995714247,"se":1.3996759883616907,"lo":62.62882501995355,"hi":68.11555489433138},{"month":1.5,"mean":64.86796906918097,"se":1.3546757258965856,"lo":62.21280464642366,"hi":67.52313349193828},{"month":1.75,"mean":64.36042915041172,"se":1.3108965499252936,"lo":61.791071912558145,"hi":66.9297863882653},{"month":2.0,"mean":63.8496629607676,"se":1.2686760966775126,"lo":61.36305781127968,"hi":66.33626811025553,"rankProb":[0.3692682337355441,0.2965210345195275,0.21464311857734034,0.11956761316758795],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":132},{"month":2.25,"mean":63.33576600767869,"se":1.2283889890127462,"lo":60.92812358921371,"hi":65.74340842614367},{"month":2.5,"mean":62.818836490232755,"se":1.1904469586183566,"lo":60.485560451340774,"hi":65.15211252912474},{"month":2.75,"mean":62.29897523869252,"se":1.155296715167746,"lo":60.03459367696374,"hi":64.5633568004213},{"month":3.0,"mean":61.77628564941395,"se":1.123414637459879,"lo":59.574392959992586,"hi":63.97817833883531,"rankProb":[0.3487435752110733,0.2917926398906188,0.22347256406796107,0.13599122083034684],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":98},{"month":3.25,"mean":61.2508736152224,"se":1.0952973458342123,"lo":59.104090817387345,"hi":63.39765641305746},{"month":3.5,"mean":60.722847451316945,"se":1.0714474154538656,"lo":58.62281051702737,"hi":62.82288438560652},{"month":3.75,"mean":60.19231781678578,"se":1.0523540286604662,"lo":58.12970392061127,"hi":62.25493171296029},{"month":4.0,"mean":59.65939763182911,"se":1.0384692809210558,"lo":57.62399784122384,"hi":61.69479742243438,"rankProb":[0.32876419166129917,0.28606091870800243,0.23136751655497179,0.1538073730757269],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":109},{"month":4.25,"mean":59.124201990798426,"se":1.0301820478334203,"lo":57.10504517704492,"hi":61.14335880455193},{"month":4.5,"mean":58.5868480711741,"se":1.0277925176415639,"lo":56.572374736596636,"hi":60.60132140575157},{"month":4.75,"mean":58.04745503861574,"se":1.0314912004166976,"lo":56.02573228579901,"hi":60.069177791432466},{"month":5.0,"mean":57.50614394823195,"se":1.0413460322388797,"lo":55.46510572504375,"hi":59.547182171420154,"rankProb":[0.30938470736730167,0.27940820390814725,0.23821378852875916,0.17299330019579193],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":90},{"month":5.25,"mean":56.963037642228294,"se":1.0572999124379983,"lo":54.890729813849816,"hi":59.03534547060677},{"month":5.5,"mean":56.41826064410341,"se":1.0791789792844515,"lo":54.30306984470589,"hi":58.53345144350094},{"month":5.75,"mean":55.871939049575076,"se":1.1067098091444092,"lo":53.70278782365203,"hi":58.04109027549812},{"month":6.0,"mean":55.3242004144279,"se":1.1395422506575477,"lo":53.090697603139105,"hi":57.55770322571669,"rankProb":[0.2906519277980031,0.27192697416989053,0.24391628069904656,0.19350481733305985],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":81},{"month":6.25,"mean":54.77517363948515,"se":1.1772741535578317,"lo":52.4677162985118,"hi":57.082630980458504},{"month":6.5,"mean":54.22498885291617,"se":1.2194747618362773,"lo":51.834818319717066,"hi":56.61515938611527},{"month":6.75,"mean":53.673777290099935,"se":1.2657046026272825,"lo":51.19299626895046,"hi":56.15455831124941},{"month":7.0,"mean":53.12167117127396,"se":1.3155308685803353,"lo":50.5432306688565,"hi":55.70011167369142,"rankProb":[0.2726046539965057,0.26371726789596045,0.24840163735678092,0.215276440750753],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":77},{"month":7.25,"mean":52.568803577204164,"se":1.3685382321039654,"lo":49.88646864228039,"hi":55.25113851212794},{"month":7.5,"mean":52.015308323119335,"se":1.4243356318483418,"lo":49.223610484696586,"hi":54.807006161542084},{"month":7.75,"mean":51.461319831158676,"se":1.48255983818433,"lo":48.55550254831739,"hi":54.36713711399996},{"month":8.0,"mean":50.906973001586714,"se":1.5428766469095199,"lo":47.88293477364405,"hi":53.931011229529375,"rankProb":[0.25527368354753227,0.2548840395183935,0.2516200603682176,0.23822221656585665],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":67},{"month":8.25,"mean":50.35240308303358,"se":1.6049804547708988,"lo":47.206641391682616,"hi":53.49816477438454},{"month":8.5,"mean":49.79774554202264,"se":1.6685928215774923,"lo":46.52730361173075,"hi":53.06818747231453},{"month":8.75,"mean":49.243135932049256,"se":1.7334604682438182,"lo":45.84555341429137,"hi":52.64071844980714},{"month":9.0,"mean":48.6887097624766,"se":1.799353028891635,"lo":45.16197782584899,"hi":52.215441699104204,"rankProb":[0.23868198063597068,0.2455345679306491,0.2535462151050879,0.2622372363282924],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":71},{"month":9.25,"mean":48.507120131874316,"se":1.7483881797606526,"lo":45.080279299543434,"hi":51.9339609642052},{"month":9.5,"mean":48.32556947739373,"se":1.6989068504803768,"lo":44.99571205045219,"hi":51.655426904335265},{"month":9.75,"mean":48.144062548820344,"se":1.6510462927944276,"lo":44.908011814943265,"hi":51.38011328269742},{"month":10.0,"mean":47.96260409143104,"se":1.604954477658322,"lo":44.81689331522073,"hi":51.10831486764135,"rankProb":[0.23340946835574855,0.24237715393541417,0.25389540980485753,0.2703179679039799],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":73},{"month":10.25,"mean":47.78119884550375,"se":1.5607901270603968,"lo":44.722050196465375,"hi":50.84034749454213},{"month":10.5,"mean":47.59985154582833,"se":1.5187224091183738,"lo":44.623155623956315,"hi":50.576547467700344},{"month":10.75,"mean":47.41856692121847,"se":1.4789301923371834,"lo":44.51986374423759,"hi":50.31727009819935},{"month":11.0,"mean":47.23734969402501,"se":1.4416007452139483,"lo":44.411812233405676,"hi":50.06288715464435,"rankProb":[0.2282184041497979,0.23917957525414352,0.2541061278630698,0.2784958927329888],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":61},{"month":11.25,"mean":47.05620457965066,"se":1.4069277662852795,"lo":44.29862615773151,"hi":49.81378300156981},{"month":11.5,"mean":46.875136286066066,"se":1.3751086520052136,"lo":44.17992332813585,"hi":49.57034924399628},{"month":11.75,"mean":46.69414951332769,"se":1.3463409339916788,"lo":44.055321282704,"hi":49.332977743951375},{"month":12.0,"mean":46.513248953097275,"se":1.3208178828951296,"lo":43.92444590262282,"hi":49.10205200357173,"rankProb":[0.22310908235864366,0.23594552746494862,0.25417916658709033,0.2867662235893175],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":73},{"month":12.25,"mean":46.33243928816312,"se":1.2987233618848832,"lo":43.78694149886875,"hi":48.877937077457496},{"month":12.5,"mean":46.15172519196332,"se":1.2802261082525852,"lo":43.642482019788254,"hi":48.66096836413839},{"month":12.75,"mean":45.97111132811099,"se":1.2654737458210559,"lo":43.49078278630172,"hi":48.451439869920264},{"month":13.0,"mean":45.79060234992161,"se":1.2545869282895872,"lo":43.33161197047402,"hi":48.249592729369205,"rankProb":[0.21808171956194378,0.2326786637666081,0.2541155842786011,0.2951240323928471],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":43},{"month":13.25,"mean":45.61020289994256,"se":1.2476540856387677,"lo":43.164800892090575,"hi":48.05560490779454},{"month":13.5,"mean":45.42991760948502,"se":1.2447272568153276,"lo":42.99025218612697,"hi":47.86958303284306},{"month":13.75,"mean":45.24975109815826,"se":1.2458194310928838,"lo":42.807945013216205,"hi":47.69155718310031},{"month":14.0,"mean":45.069707973406416,"se":1.2509036858129305,"lo":42.61793674921307,"hi":47.52147919759976,"rankProb":[0.21313645670867404,0.22938258806245504,0.2539166929512604,0.30356426227761074],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":43},{"month":14.25,"mean":44.88979283004788,"se":1.2599142207967673,"lo":42.42036095728622,"hi":47.35922470280954},{"month":14.5,"mean":44.71001024981747,"se":1.2727491815035301,"lo":42.215421854070556,"hi":47.20459864556439},{"month":14.75,"mean":44.53036480091118,"se":1.289274976947051,"lo":42.00338584609496,"hi":47.0573437557274},{"month":15.0,"mean":44.350861037534166,"se":1.3093316636114203,"lo":41.78457097685578,"hi":46.91715109821255,"rankProb":[0.20827336133302563,0.22606084845220217,0.25358405022254416,0.31208173999222816],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":47},{"month":15.25,"mean":44.17150349945136,"se":1.3327389079922365,"lo":41.55933523978658,"hi":46.783671759116146},{"month":15.5,"mean":43.99229671154134,"se":1.3593020533714035,"lo":41.328064686933395,"hi":46.65652873614929},{"month":15.75,"mean":43.81324518335342,"se":1.3888178878805315,"lo":41.09116212310758,"hi":46.53532824359927},{"month":16.0,"mean":43.6343534086678,"se":1.4210798172666212,"lo":40.849036966825224,"hi":46.419669850510374,"rankProb":[0.2034924298455158,0.22271693114159355,0.2531194504402997,0.3206711885725911],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":44},{"month":16.25,"mean":43.45562586505922,"se":1.4558822604749624,"lo":40.602096634528294,"hi":46.30915509559014},{"month":16.5,"mean":43.27706701346399,"se":1.493024192356256,"lo":40.35073959644573,"hi":46.203394430482255},{"month":16.75,"mean":43.0986812977505,"se":1.5323118422213535,"lo":40.095350086996646,"hi":46.10201250850436},{"month":17.0,"mean":42.92047314429338,"se":1.5735606156754538,"lo":39.83629433756949,"hi":46.00465195101727,"rankProb":[0.19879358988903514,0.2193542547770958,0.2525249151075043,0.32932724022636484],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":47},{"month":17.25,"mean":42.7424469615513,"se":1.6165963413331892,"lo":39.57391813253825,"hi":45.91097579056435},{"month":17.5,"mean":42.56460713964857,"se":1.6612559592957687,"lo":39.30854545942886,"hi":45.82066881986828},{"month":17.75,"mean":42.38695804996053,"se":1.7073877662848624,"lo":39.0404780280422,"hi":45.733438071878865},{"month":18.0,"mean":42.20950404470293,"se":1.754851325977094,"lo":38.76999544578783,"hi":45.649012643618036,"rankProb":[0.19417670274981572,0.21597616521026186,0.25180268267111705,0.3380444493688054],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":27},{"month":18.25,"mean":42.03224945652523,"se":1.8035171355257922,"lo":38.49735587089467,"hi":45.567143042155784},{"month":18.5,"mean":41.85519859810804,"se":1.853266126669061,"lo":38.22279698983668,"hi":45.4876002063794},{"month":18.75,"mean":41.67835576176469,"se":1.9039890616823436,"lo":37.9465372008673,"hi":45.41017432266209},{"month":19.0,"mean":41.50172521904703,"se":1.9555858714401466,"lo":37.668776911024345,"hi":45.33467352706972,"rankProb":[0.18964156581360467,0.21258593069392898,0.2509551977427389,0.34681730574972747],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":38},{"month":19.25,"mean":41.32531122035546,"se":2.0079649720683808,"lo":37.389699875101435,"hi":45.260922565609484},{"month":19.5,"mean":41.14911799455348,"se":2.061042583902901,"lo":37.10947453010379,"hi":45.18876145900317},{"month":19.75,"mean":40.97314974858646,"se":2.1147420707528797,"lo":36.828255289910814,"hi":45.1180442072621},{"month":20.0,"mean":40.79741066710514,"se":2.168993312188827,"lo":36.54618377521504,"hi":45.04863755899524,"rankProb":[0.18518791505765855,0.20918673751006278,0.2499850998200535,0.35564024761222524],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":28},{"month":20.25,"mean":40.62190491209354,"se":2.223732113572753,"lo":36.263389969490945,"hi":44.98041985469614},{"month":20.5,"mean":40.44663662250153,"se":2.2788996584737657,"lo":35.979993291892946,"hi":44.91327995311011},{"month":20.75,"mean":40.27160991388213,"se":2.3344420058571247,"lo":35.696103582402166,"hi":44.847116245362095},{"month":21.0,"mean":40.09682887803361,"se":2.3903096287994936,"lo":35.41182200558661,"hi":44.78183575048062,"rankProb":[0.1808154275695304,0.20578168602684252,0.2488952115787323,0.3645076748248949],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":24},{"month":21.25,"mean":39.922297582646266,"se":2.4464569953227713,"lo":35.12724187181364,"hi":44.717353293478894},{"month":21.5,"mean":39.7480200709542,"se":2.5028421886896925,"lo":34.8424493811224,"hi":44.653590760785995},{"month":21.75,"mean":39.574000361391974,"se":2.5594265633966007,"lo":34.557524297134634,"hi":44.590476425649314},{"month":22.0,"mean":39.40024244725627,"se":2.6161744357037593,"lo":34.2725405532769,"hi":44.52794434123564,"rankProb":[0.17652372408400693,0.20237378718050492,0.24768852680465767,0.3734139619308306],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0,"n":32},{"month":22.25,"mean":39.22675029637254,"se":2.673052804550424,"lo":33.98756679945372,"hi":44.46593379329137},{"month":22.5,"mean":39.05352785076687,"se":2.7300311005007756,"lo":33.70266689378535,"hi":44.40438880774839},{"month":22.75,"mean":38.880579026342744,"se":2.7870809599966395,"lo":33.41790034474933,"hi":44.34325770793616},{"month":23.0,"mean":38.70790771256331,"se":2.8441760230530457,"lo":33.13332270737934,"hi":44.28249271774728,"rankProb":[0.17231237152995055,0.19896595937553768,0.24636819803597262,0.38235347105853923],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":13},{"month":23.25,"mean":38.53551777213862,"se":2.901291751565941,"lo":32.84898593906937,"hi":44.222049605207864},{"month":23.5,"mean":38.36341304071826,"se":2.9584052646311036,"lo":32.56493872204129,"hi":44.16188735939522},{"month":23.75,"mean":38.19159732658929,"se":3.0154951924175886,"lo":32.281226749450816,"hi":44.10196790372776},{"month":24.0,"mean":38.02007441037952,"se":3.072541543984861,"lo":31.997892984169194,"hi":44.042255836589845,"rankProb":[0.1681808855792232,0.19556102579504236,0.24493752398363147,0.39132056464210313],"predictionLo":0.0,"predictionHi":100.0,"predictionCoverage":1.0000000000000002,"n":19}],"contrast12vs0":{"estimate":-21.327211761405792,"se":2.3881395439128523,"lo":-26.007965267474983,"hi":-16.6464582553366,"p":4.241975403080598e-19},"contrast24vs12":{"estimate":-8.493174542717753,"se":3.265474768409202,"lo":-14.893505088799788,"hi":-2.092843996635718,"p":0.009297945184159157},"deltaAic":0.6557555374129151}],"nonlinearityTest":{"statistic":11.9666498153274,"df":3,"p":0.007498281674609723},"generation":{"knots":[0,6,12,18,24],"utilityAtKnots":[0.62,0.18,-0.22,-0.31,-0.38],"activeEffect":0.24,"competitorUtilities":[0.28,-0.12,0]},"inference":"Independent fictional tasters, observed-information covariance, pointwise delta-method CI; discrete equal-tail individual prediction interval."}
+</script>
+    <!-- ANALYSIS_DATA_END -->
+    <script>
+      "use strict";
+      const DATA = JSON.parse(
+        document.querySelector("#analysis-data").textContent,
+      );
+      const $ = (s) => document.querySelector(s),
+        $$ = (s) => [...document.querySelectorAll(s)];
+      const f1 = (v) => v.toFixed(1),
+        f2 = (v) => v.toFixed(2),
+        f3 = (v) => v.toFixed(3),
+        nfmt = (v) => v.toLocaleString("en-US");
+      const signed = (v) =>
+          (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1),
+        ptext = (v) => (v < 0.001 ? "&lt;0.001" : v.toFixed(3));
+      let currentModel = "spline",
+        selectedMonth = 12,
+        compare = false,
+        geometry = null;
+      const model = () => DATA.models.find((m) => m.id === currentModel),
+        mainModel = DATA.models.find((m) => m.id === "spline");
+      const at = (m, t) => m.curve.find((p) => p.month === t);
+      function renderStatic() {
+        const a = at(mainModel, 0),
+          b = at(mainModel, 12),
+          d = mainModel.contrast12vs0,
+          tail = mainModel.contrast24vs12;
+        $("#main-finding").innerHTML =
+          `曲线比较不同间隔间隔天数下的标准化平均位置，不代表同一试吃参与者会随时间按这条轨迹变化。`;
+        $("#tail-finding").textContent =
+          `24 天相对 12 天：${signed(tail.estimate)} 个百分点，95% CI [${signed(tail.lo)}, ${signed(tail.hi)}]。这是探索性对比，不据此认定趋势逆转。`;
+        $("#hero-effect").textContent = signed(d.estimate);
+        $("#hero-contrast-ci").textContent = `联合对比 95% CI [${signed(d.lo)}, ${signed(d.hi)}]`;
+        $("#overview-model-note").textContent = `本次模拟支持非线性，但样条与分段模型的验证损失接近，不能认定泛化能力显著优胜。`;
+        $("#insight-points").innerHTML = [a,b].map((r,i)=>`<div class="insight-point"><div class="insight-point-heading"><span>${i ? '12' : '0'} 天</span><strong class="num">${f1(r.mean)}<small>%</small></strong></div><svg viewBox="0 0 100 8" preserveAspectRatio="none" role="img" aria-label="${i ? '12' : '0'} 天预测 ${f1(r.mean)}%，95% CI ${f1(r.lo)} 至 ${f1(r.hi)}"><line x1="0" y1="4" x2="100" y2="4" stroke="var(--chart-track)" stroke-width="1"/><line x1="50" y1="0" x2="50" y2="8" stroke="var(--chart-reference)" stroke-width=".25" stroke-dasharray="1 1"/><line x1="${r.lo}" y1="4" x2="${r.hi}" y2="4" stroke="${i ? 'var(--chart-focus)' : 'var(--chart-context)'}" stroke-width="1.2"/><line x1="${r.lo}" y1="2.5" x2="${r.lo}" y2="5.5" stroke="${i ? 'var(--chart-focus)' : 'var(--chart-context)'}" stroke-width=".4"/><line x1="${r.hi}" y1="2.5" x2="${r.hi}" y2="5.5" stroke="${i ? 'var(--chart-focus)' : 'var(--chart-context)'}" stroke-width=".4"/><svg x="${r.mean-1.5}" y="2.5" width="3" height="3" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet"><circle cx="5" cy="5" r="4" fill="${i ? 'var(--chart-focus)' : 'var(--chart-context)'}"/></svg></svg></div>`).join('');
+        $("#model-table").innerHTML = DATA.models
+          .map(
+            (m) =>
+              `<tr data-model-row="${m.id}"><th scope="row"><button class="model-select" data-table-model="${m.id}">${m.name}<span>${m.id === "spline" ? "间隔天数 4 自由参数 · 主分析" : m.id === "linear" ? "每 12 天一个效用斜率" : "固定折点 9 天 · 连续"}</span></button></th><td>${m.k}</td><td>${f1(m.logLik)}</td><td>${f1(m.aic)}</td><td>${f1(m.deltaAic)}</td><td>${m.cvNll.toFixed(4)}</td></tr>`,
+          )
+          .join("");
+        const test = DATA.nonlinearityTest;
+        $("#lr-result").innerHTML =
+          `样条对线性：似然比 χ²(${test.df}) = ${f2(test.statistic)}，p ${ptext(test.p)}。生成机制含非线性，结果仅限此模拟场景。`;
+        const piece = DATA.models.find((m) => m.id === "piecewise");
+        $("#cv-result").textContent =
+          `验证损失差异未作显著性检验；不能将表中较低的 NLL 当作已证实的泛化优势。`;
+        $("#support-note").innerHTML =
+          `18–24 天：<strong class="num">${nfmt(DATA.tailN)}</strong> 人（${f1((DATA.tailN / DATA.n) * 100)}%），尾段支持较少。`;
+        $("#standardization-note").textContent =
+          `控制香草口味 × 偏甜口味状态，标准化至本模拟样本中固定的偏甜口味比例 ${f2(DATA.activeShare * 100)}%。保持候选集、标准化权重与其他协变量设定相同。`;
+        $("#parameter-table").innerHTML = mainModel.parameters
+          .map(
+            (p) =>
+              `<tr><th scope="row">${p.name}</th><td>${f3(p.estimate)}</td><td>${f3(p.se)}</td><td>[${f3(p.lo)}, ${f3(p.hi)}]</td><td>${ptext(p.p)}</td></tr>`,
+          )
+          .join("");
+        $("#distribution-month").innerHTML = Array.from(
+          { length: 25 },
+          (_, i) => `<option value="${i}">${i} 天</option>`,
+        ).join("");
+        $$("[data-table-model]").forEach((b) =>
+          b.addEventListener("click", () => setModel(b.dataset.tableModel)),
+        );
+      }
+      function selectionMarker(cx,cy) {
+        const style=getComputedStyle(document.documentElement), r=Number(style.getPropertyValue('--hm-chart-marker-radius'))||6;
+        return style.getPropertyValue('--hm-chart-marker').trim()==='diamond'
+          ? `<path class="selected-dot" d="M${cx} ${cy-r} L${cx+r} ${cy} L${cx} ${cy+r} L${cx-r} ${cy} Z"/>`
+          : `<circle class="selected-dot" cx="${cx}" cy="${cy}" r="${r}"/>`;
+      }
+      function renderTrend() {
+        const svg = $("#trend-svg"),
+          width = svg.parentElement.clientWidth,
+          height = svg.parentElement.clientHeight;
+        const left = width < 480 ? 38 : 48,
+          right = 18,
+          top = 14,
+          bottom = 36,
+          pw = width - left - right,
+          ph = height - top - bottom;
+        const x = (t) => left + (t / 24) * pw,
+          y = (v) => top + ((100 - v) / 100) * ph;
+        geometry = { left, right, pw, width };
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        const m = model(),
+          point = at(m, selectedMonth),
+          path = (arr) =>
+            arr
+              .map(
+                (p, i) =>
+                  `${i ? "L" : "M"}${x(p.month).toFixed(2)},${y(p.mean).toFixed(2)}`,
+              )
+              .join(" ");
+        const band =
+          m.curve
+            .map((p, i) => `${i ? "L" : "M"}${x(p.month)},${y(p.hi)}`)
+            .join(" ") +
+          m.curve
+            .slice()
+            .reverse()
+            .map((p) => ` L${x(p.month)},${y(p.lo)}`)
+            .join(" ") +
+          " Z";
+        const extra = compare
+          ? DATA.models
+              .filter((v) => v.id !== currentModel)
+              .map(
+                (v) =>
+                  `<path class="curve-secondary" d="${path(v.curve)}" stroke-dasharray="${v.id === "linear" ? "8 5" : v.id === "piecewise" ? "2 4" : "12 4 2 4"}"/>`,
+              )
+              .join("")
+          : "";
+        svg.innerHTML = `<title id="trend-svg-title">${m.name}：间隔天数与香草冰激淋的预测排名百分位</title><desc id="trend-svg-description">横轴0至24天，纵轴0至100%，越高排序越靠前。实线为标准化均值，带状区域为逐点95%置信区间，虚线为50%解释参考。当前${selectedMonth}天均值${f1(point.mean)}%，区间${f1(point.lo)}至${f1(point.hi)}。可用下方间隔天数滑杆键盘操作，并在明细表读取数值。</desc>${[12.5,37.5,62.5,87.5].map(v=>`<line class="minor-grid" x1="${left}" x2="${width-right}" y1="${y(v)}" y2="${y(v)}"/>`).join("")}${[0, 25, 50, 75, 100].map((v) => `<line class="${v === 50 ? "reference-line" : "chart-grid"}" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="chart-axis" x="${left - 10}" y="${y(v) + 4}" text-anchor="end">${v}</text>`).join("")}${[0, 6, 12, 18, 24].map((v) => `<text class="chart-axis" x="${x(v)}" y="${height - 10}" text-anchor="middle">${v}</text>`).join("")}<path class="band" d="${band}"/>${extra}<path class="curve-focus" d="${path(m.curve)}"/><line class="cursor-line" x1="${x(selectedMonth)}" x2="${x(selectedMonth)}" y1="${top}" y2="${top + ph}"/>${selectionMarker(x(selectedMonth),y(point.mean))}`;
+        const legend = $("#comparison-legend");
+        legend.hidden = !compare;
+        legend.innerHTML = DATA.models
+          .filter((v) => v.id !== currentModel)
+          .map(
+            (v) =>
+              `<span><svg width="28" height="10" aria-hidden="true"><path d="M0 5 H28" fill="none" stroke="var(--chart-context)" stroke-width="2" stroke-dasharray="${v.id === "linear" ? "8 5" : v.id === "piecewise" ? "2 4" : "12 4 2 4"}"/></svg>${v.name}</span>`,
+          )
+          .join("");
+      }
+      function renderSupport() {
+        const svg = $("#support-svg"),
+          w = svg.clientWidth,
+          h = svg.clientHeight,
+          left = 38,
+          right = 10,
+          top = 24,
+          bottom = 44,
+          pw = w - left - right,
+          ph = h - top - bottom;
+        const compact = w < 340;
+        const bins = compact
+          ? [0, 2, 4, 6].map((i) => ({
+              start: DATA.supportBins[i].start,
+              end: DATA.supportBins[i + 1].end,
+              n: DATA.supportBins[i].n + DATA.supportBins[i + 1].n,
+            }))
+          : DATA.supportBins;
+        const maximum = compact ? 2500 : 1500,
+          ticks = compact ? [0, 1000, 2000, 2500] : [0, 500, 1000, 1500];
+        const group = pw / bins.length,
+          bar = Math.min(36, group * 0.62);
+        svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+        $("#support-binning-note").textContent = compact
+          ? "试吃参与者数 · 窄屏合并为四组 · 最后一组跨度 7 天"
+          : "试吃参与者数 · 互斥间隔天数区间 · 最后一组跨度为 4 天";
+        svg.innerHTML = `<title id="support-svg-title">模拟试吃参与者的间隔天数覆盖，前段多于后段</title><desc id="support-svg-description">${bins.length}个互斥间隔天数区间的试吃参与者数依次为${bins.map((b) => `${b.start}至${b.end}天${b.n}人`).join("，")}。纵轴0至${maximum}位试吃参与者。</desc>${ticks.map((v) => `<line class="chart-grid" x1="${left}" x2="${w - right}" y1="${top + ph - (v / maximum) * ph}" y2="${top + ph - (v / maximum) * ph}"/><text class="chart-axis" x="${left - 8}" y="${top + ph - (v / maximum) * ph + 4}" text-anchor="end">${v}</text>`).join("")}${bins
+          .map((b) => {
+            const i = bins.indexOf(b),
+              x = left + group * (i + 0.5),
+              bh = (b.n / maximum) * ph;
+            return `<rect x="${x - bar / 2}" y="${top + ph - bh}" width="${bar}" height="${bh}" rx="3" fill="var(--chart-context)"/><text class="chart-axis" x="${x}" y="${top + ph - bh - 8}" text-anchor="middle">${b.n}</text><text class="chart-axis" x="${x}" y="${h - 14}" text-anchor="middle">${b.start}–${b.end}</text>`;
+          })
+          .join("")}`;
+      }
+      function renderReadouts() {
+        const m = model(),
+          p = at(m, selectedMonth);
+        $("#month-label").textContent = selectedMonth + " 天";
+        $("#month-slider").value = selectedMonth;
+        $("#distribution-month").value = selectedMonth;
+        $("#month-readout").innerHTML =
+          `<strong class="num">${f1(p.mean)}%</strong><span>95% CI ${f1(p.lo)}–${f1(p.hi)}</span><span>该天 n = ${p.n}</span>`;
+        $("#distribution-model").textContent = `${m.name} · 标准化个体预测概率`;
+        $("#probability-list").innerHTML = p.rankProb
+          .map(
+            (prob, i) =>
+              `<div class="probability-row"><span>第 ${i + 1} 位</span><div class="probability-track" aria-hidden="true"><div class="probability-fill" style="width:${prob * 100}%"></div></div><strong class="num">${f1(prob * 100)}%</strong></div>`,
+          )
+          .join("");
+        $("#prediction-summary").innerHTML =
+          `<strong class="num">${f1(p.predictionLo)}–${f1(p.predictionHi)}%</strong><p>个体等尾 95% 预测区间 · 离散覆盖率 ${f1(p.predictionCoverage * 100)}%。</p>`;
+        $$("[data-model]").forEach((b) =>
+          b.setAttribute(
+            "aria-pressed",
+            String(b.dataset.model === currentModel),
+          ),
+        );
+        $$("[data-model-row]").forEach((r) =>
+          r.classList.toggle("active", r.dataset.modelRow === currentModel),
+        );
+        $("#prediction-table-model").textContent =
+          `${m.name}`;
+        $("#prediction-table").innerHTML = [0, 3, 6, 9, 12, 18, 24]
+          .map((t) => {
+            const p = at(m, t);
+            return `<tr class="${t === selectedMonth ? "selected" : ""}"><th scope="row">${t}</th><td>${p.n}</td><td>${f1(p.mean)}%</td><td>[${f1(p.lo)}, ${f1(p.hi)}]</td><td>[${f1(p.predictionLo)}, ${f1(p.predictionHi)}]</td><td>${f1(p.rankProb[0] * 100)}%</td></tr>`;
+          })
+          .join("");
+      }
+      function setModel(id) {
+        currentModel = id;
+        renderTrend();
+        renderReadouts();
+      }
+      function setMonth(month) {
+        selectedMonth = Math.max(0, Math.min(24, Number(month)));
+        renderTrend();
+        renderReadouts();
+      }
+      $$("[data-model]").forEach((b) =>
+        b.addEventListener("click", () => setModel(b.dataset.model)),
+      );
+      $("#month-slider").addEventListener("input", (e) =>
+        setMonth(e.target.value),
+      );
+      $("#distribution-month").addEventListener("change", (e) =>
+        setMonth(e.target.value),
+      );
+      $("#compare-models").addEventListener("change", (e) => {
+        compare = e.target.checked;
+        renderTrend();
+      });
+      $("#trend-svg").addEventListener("pointerdown", (e) => {
+        if (!geometry) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        const px = ((e.clientX - r.left) * geometry.width) / r.width;
+        setMonth(Math.round(((px - geometry.left) / geometry.pw) * 24));
+      });
+      $("#export-csv").addEventListener("click", () => {
+        const m = model(),
+          rows = [
+            [
+              "数据性质",
+              "模型",
+              "间隔天数",
+              "该天试吃参与者数",
+              "均值百分位",
+              "均值CI下限",
+              "均值CI上限",
+              "个体预测区间下限",
+              "个体预测区间上限",
+              "第1位概率",
+              "第2位概率",
+              "第3位概率",
+              "第4位概率",
+            ],
+            ...m.curve
+              .filter((p) => Number.isInteger(p.month))
+              .map((p) => [
+                "模拟数据_实际拟合",
+                m.name,
+                p.month,
+                p.n,
+                p.mean,
+                p.lo,
+                p.hi,
+                p.predictionLo,
+                p.predictionHi,
+                ...p.rankProb,
+              ]),
+          ];
+        const csv =
+          "\ufeff" +
+          rows
+            .map((r) =>
+              r
+                .map((v) => '"' + String(v).replaceAll('"', '""') + '"')
+                .join(","),
+            )
+            .join("\r\n");
+        const url = URL.createObjectURL(
+          new Blob([csv], { type: "text/csv;charset=utf-8;" }),
+        );
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `排序分析_${m.id}_模拟预测.csv`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        $("#status").textContent = "已生成所选模型的 25 个间隔天数预测";
+        clearTimeout(window.statusTimer);
+        window.statusTimer = setTimeout(
+          () => ($("#status").textContent = ""),
+          2200,
+        );
+      });
+      let priorDetails = [];
+      window.addEventListener("beforeprint", () => {
+        priorDetails = $$("details").map((d) => d.open);
+        $$("details").forEach((d) => (d.open = true));
+        renderTrend();
+        renderSupport();
+      });
+      window.addEventListener("afterprint", () => {
+        $$("details").forEach((d, i) => (d.open = priorDetails[i]));
+        renderTrend();
+        renderSupport();
+      });
+      const observer = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((entry) => {
+            if (entry.isIntersecting)
+              $$(".nav-links a").forEach((a) =>
+                a.hash === "#" + entry.target.id
+                  ? a.setAttribute("aria-current", "location")
+                  : a.removeAttribute("aria-current"),
+              );
+          }),
+        { rootMargin: "-12% 0px -55% 0px", threshold: 0 },
+      );
+       $$("main > header[id], main > section[id]").forEach((el) => observer.observe(el));
+      renderStatic();
+      renderReadouts();
+      renderTrend();
+      renderSupport();
+      let resizeFrame;
+      new ResizeObserver(() => {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(() => {
+          renderTrend();
+          renderSupport();
+        });
+      }).observe($(".wrap"));
+    </script>
+    <script src="case/base-controller.js"></script>
+  </body>
+</html>

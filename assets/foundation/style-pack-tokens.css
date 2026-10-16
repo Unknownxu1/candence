@@ -1,0 +1,37 @@
+/* Additive expressive layer. NONE matches no report selectors below. */
+:root:where([data-style-pack]:not([data-style-pack="none"])) {
+  --sp-edge:var(--text-primary);
+  --sp-soft-edge:var(--border-strong);
+  --sp-radius:12px;
+  --sp-panel-shadow:0 0 0 0 transparent;
+  --sp-panel-line:inset 0 0 0 1px var(--sp-soft-edge);
+  --sp-hero:var(--surface-page);
+  --sp-panel:var(--surface-content);
+  --sp-control-radius:6px;
+  --sp-band-preview:linear-gradient(var(--surface-selected),var(--surface-selected));
+}
+:root:where([data-style-pack]:not([data-style-pack="none"])) .composition-hero {background:var(--sp-hero);}
+:root:where([data-style-pack]:not([data-style-pack="none"])) :is(.insight-panel,.chart-surface,.uncertainty-canvas) {
+  position:relative;border-radius:var(--sp-radius);background:var(--sp-panel);
+  box-shadow:var(--sp-panel-line),var(--sp-panel-shadow);
+}
+:root:where([data-style-pack]:not([data-style-pack="none"])) :is(.segmented,.segmented button,.export,.design-toggle,.design-controls,.design-controls select,#reset-design,.simulation) {border-radius:var(--sp-control-radius);}
+:root:where([data-style-pack]:not([data-style-pack="none"])) .nav {background:var(--surface-content);backdrop-filter:none;-webkit-backdrop-filter:none;}
+:root:where([data-style-pack]:not([data-style-pack="none"])) :is(.hero-heading,.section-heading,.editorial-findings) {position:relative;}
+:root:where([data-style-pack]:not([data-style-pack="none"])) .key-band {opacity:1;background:var(--sp-band-preview);outline:1px solid var(--border-strong);}
+:root:where([data-style-pack]:not([data-style-pack="none"])) :is(.band,.sp-marker,.selected-dot) {vector-effect:non-scaling-stroke;}
+:root:where([data-style-pack]:not([data-style-pack="none"])) .band {fill:url(#sp-ci-fill);opacity:1;stroke:var(--chart-focus);stroke-width:.65;stroke-opacity:.5;}
+:root:where([data-style-pack]:not([data-style-pack="none"])) .curve-focus {stroke-dasharray:none;}
+:root:where([data-style-pack]:not([data-style-pack="none"])) .sp-marker {stroke:var(--chart-focus);fill:var(--surface-content);stroke-width:2;}
+:root:where([data-style-pack]:not([data-style-pack="none"])) footer {border-top:1px solid var(--border-strong);}
+/* The settings layer may scroll on small/short screens. Report geometry stays frozen. */
+.design-controls {max-height:calc(100dvh - 108px);overflow:auto;overscroll-behavior:contain;}
+#style-description {display:block;font-size:var(--type-small);line-height:1.7;color:var(--text-secondary);margin-bottom:var(--space-16);}
+#style-description:empty {display:none;}
+:root[data-style-pack="none"] #active-style {display:none;}
+@media(max-width:760px){.design-toggle #active-style {display:none;}.design-controls {max-height:calc(100dvh - 100px);}}
+@media(prefers-contrast:more){:root:where([data-style-pack]:not([data-style-pack="none"])) .band {stroke-opacity:1;stroke-width:1.2;}}
+@media print{
+  :root:where([data-style-pack]:not([data-style-pack="none"])) :is(.insight-panel,.chart-surface,.uncertainty-canvas) {box-shadow:inset 0 0 0 1px var(--border-strong);}
+  :root:where([data-style-pack]:not([data-style-pack="none"])) .composition-hero {background:var(--surface-content);}
+}
