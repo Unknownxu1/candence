@@ -1,12 +1,12 @@
 from pathlib import Path
-import importlib.util,tempfile,json,re,hashlib,shutil
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'tests/artifacts';OUT.mkdir(parents=True,exist_ok=True)
+import importlib.util,tempfile,json,re,hashlib,shutil,os
+ROOT=Path(__file__).resolve().parents[1];OUT=Path(os.environ.get('CADENCE_TEST_OUTPUT',ROOT/'tests/artifacts'));OUT.mkdir(parents=True,exist_ok=True)
 def load(name,path):
     spec=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
 creator=load('creator',ROOT/'scripts/create_report.py');bundle=load('bundle',ROOT/'scripts/bundle_html.py');installer=load('installer',ROOT/'scripts/install_skill.py')
 text=(ROOT/'SKILL.md').read_text(encoding='utf-8');front=re.match(r'^---\n(.*?)\n---',text,re.S).group(1)
 assert re.search(r'^name: cadence$',front,re.M);assert 'description:' in front;assert 'TODO' not in text
-assert (ROOT/'VERSION').read_text().strip()=='0.1.1';assert json.loads((ROOT/'package.json').read_text())['version']=='0.1.1'
+assert (ROOT/'VERSION').read_text().strip()=='0.2.0';assert json.loads((ROOT/'package.json').read_text())['version']=='0.2.0'
 missing=[]
 for p in [ROOT/'SKILL.md',*list((ROOT/'references').glob('*.md'))]:
     for target in re.findall(r'\]\(([^)]+)\)',p.read_text(encoding='utf-8')):

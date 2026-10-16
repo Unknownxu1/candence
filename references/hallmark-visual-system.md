@@ -17,6 +17,6 @@ Modern Sans 使用系统无衬线；Editorial 标题用内嵌衬线、正文继�
 
 通用控制器 `assets/runtime/design-controls.js` 只维护三轴与 `hallmark:designchange` 事件；分析状态由调用者负责。它不依赖 Rank Logit 的 `renderTrend`、`DATA` 或月份状态。Rank 案例适配器在 `examples/rank-logit/case/`，仅为该案例使用。
 
-Expressive Style Pack 为实验性附加层：Pixel / Cel Shaded / Sunset Retro / Newspaper Editorial。按需读[表达层规则](expressive-style-packs.md)。它们不默认激活，也不强制绑定基础主题。
+Visual Grammar 是本层的组件表现合约，不增加第六层；按需读 [通用语法](../foundation/visual-grammar.md)。Pixel v2 提供首个完整语法实现；Cel Shaded / Sunset Retro / Newspaper Editorial 继续 Experimental。按需读[表达层规则](expressive-style-packs.md)。它们不默认激活，也不强制绑定基础主题。
 
 新增主题时复制一份角色配置，保持几何和统计接口；补齐文本、控件、图表与焦点态，登记控制器枚举和 Auto 映射，在同内容上做对比度、窄屏及切换回归。新增字体先声明许可、降级链和覆盖，不扩张为完整字体管理框架。

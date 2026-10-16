@@ -2,7 +2,7 @@
 name: cadence
 description: Design and generate visually harmonious, expressive HTML reports with adaptive composition, data visualization, typography, themes, and visual validation.
 metadata:
-  version: "0.1.1"
+  version: "0.2.0"
 ---
 
 # Cadence
@@ -22,11 +22,13 @@ metadata:
 1. **理解任务与数据 → 选择呈现方式。** 读取 [Layer 4](references/content-and-data-presentation.md)。列出估计对象、比较基准、来源、不确定性与 P0–P3 信息预算。根据连续变化、类别比较、精确查数等阅读任务选图，不按算法名选图。
 2. **选择构图。** 需要组织页面时读 [Layer 2](references/composition-patterns.md)，选择适用的 Hero、综合结果面板、发现、证据或技术明细；不要求全部出现，也不要求六章节。先复用已认可关系，再适配内容。
 3. **应用视觉秩序。** 读 [Layer 1](references/design-dna.md)，检查阅读轴、标题/数字比例、组间节奏、图文对齐与整体平衡。1080px、两行标题等案例数值是起点，不是裁剪内容的硬容器。
-4. **应用视觉系统。** 当需要配置或切换外观时读 [Layer 3](references/hallmark-visual-system.md)。无用户偏好时采用 Apple Classic + Modern Sans/Auto + Style 关闭。主题和排印可独立选择；只在用户要求或当前展示确有需要时启用实验性 Style Pack，并读 [表达层](references/expressive-style-packs.md)。
+4. **应用视觉系统。** 当需要配置或切换外观时读 [Layer 3](references/hallmark-visual-system.md)。无用户偏好时采用 Apple Classic + Modern Sans/Auto + Style 关闭。主题和排印可独立选择；需要表达型风格时按需读 [表达层](references/expressive-style-packs.md)。设计或适配风格组件时读 Layer 3 内的 [Visual Grammar](foundation/visual-grammar.md)；Pixel 再读 [Pixel Grammar](styles/expressive/pixel/grammar.md)。不默认加载所有风格。
 5. **生成 HTML。** 复用 `assets/`，保持数据与表现分离。需要组件或辅助脚本时读 [组件接口](references/components.md)；需要离线/单文件、字体或依赖处理时读 [交付与依赖](references/delivery-and-dependencies.md)。`scripts/create_report.py` 是区间/计数/短趋势的小型可选起步器，不限制其他图表，也不负责拟合。
 6. **分阶段验收 → 集中修正 → 交付。** 按 [Layer 5](references/visual-validation.md) 执行 A 数据可靠性 → B 功能冒烟 → C 真实截图与看图；B 有阻断项时不进入截图批次。按 [变更影响矩阵](validation/change-impact-matrix.md) 复用未受影响的有效检查，不默认回归未启用主题/风格或所有设备。
 
 一次初始视觉验收后，默认最多两轮集中视觉修正；每轮先列具体缺陷。四项 [Completion Gates](validation/completion-gates.md) 全通过即停止，不继续打磨非关键边距或装饰。预算用尽且仍有阻断项时，保留产物、如实报告并请求用户决定是否扩展；不得标记通过。无实际截图或尚未看图，不能声称视觉验收完成。
+
+Skill 仓库保存可复用规则与实现；实验报告、数据、截图和一次性记录放用户指定的独立工作区。先核对其实际路径和访问权限；不可访问时停止相关产物操作，不在 Skill 仓库内创建替代实验目录。独立交付的 HTML 应内嵌所需本地资源和许可，或明确多文件依赖。
 
 对简单修改仅加载相关层，不无条件通读全部仓库。来源成熟度或样例比较有需要时才读 [能力盘点](references/inventory.md) 或 `examples/`。所有公开示例必须使用独立合成或明确获准公开的数据；不得复制工作项目、历史截图、业务术语或原始数据。源码资源不是需要全部读入上下文的指令。
 

@@ -110,7 +110,7 @@
   {
     "source": "Cadence asset or synthetic example",
     "destination": "assets/foundation/style-pack-pixel.css",
-    "artifactSha256": "4e57c9d05cb195226ca30984a65b746c5f6add1e2de412e0cdf0bba4414c306b",
+    "artifactSha256": "3213d4148f7e0085b8da0a079544d06a3c9bc46e25f4b7c984ed8ea59b8f883b",
     "status": "artifact integrity record"
   },
   {
@@ -603,6 +603,12 @@
     "source": "Cadence asset or synthetic example",
     "destination": "examples/service-operations/source.json",
     "artifactSha256": "24741011b5a7c9a132f569be54722bb7e46ca568ea587a11cdfbb75aa450999b",
+    "status": "artifact integrity record"
+  },
+  {
+    "source": "Cadence reusable implementation",
+    "destination": "assets/runtime/visual-grammar.js",
+    "artifactSha256": "16c6ef8a37ac8d951a98fd14ffee757eb73a1a038efffa6d5471288032162d8a",
     "status": "artifact integrity record"
   }
 ]

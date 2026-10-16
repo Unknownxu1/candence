@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');const AxeBuilder=require('@axe-core/playwright').default;
 const path=require('path'),fs=require('fs'),assert=require('assert/strict');
 const reviewHelpers=require('../scripts/browser-review.cjs');
-const root=path.resolve(__dirname,'..'),out=path.join(root,'tests/artifacts');fs.mkdirSync(out,{recursive:true});
+const root=path.resolve(__dirname,'..'),out=process.env.CADENCE_TEST_OUTPUT??path.join(root,'tests/artifacts');fs.mkdirSync(out,{recursive:true});
 const cases=['causal-inference','rank-logit','service-operations'];
 (async()=>{
  const browser=await chromium.launch({headless:true,...(process.env.BROWSER_EXECUTABLE?{executablePath:process.env.BROWSER_EXECUTABLE}:{})});

@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {spawnSync}=require('node:child_process');
 const {review,completeReview,plan,evidenceIntact}=require('../scripts/review-report.cjs');
-const root=path.resolve(__dirname,'..'),out=path.join(__dirname,'artifacts/execution');fs.mkdirSync(out,{recursive:true});
+const root=path.resolve(__dirname,'..'),out=path.join(process.env.CADENCE_TEST_OUTPUT??path.join(__dirname,'artifacts'),'execution');fs.mkdirSync(out,{recursive:true});
 function copy(src,dest){fs.mkdirSync(dest,{recursive:true});for(const e of fs.readdirSync(src,{withFileTypes:true})){assert.ok(!e.isSymbolicLink());const s=path.join(src,e.name),d=path.join(dest,e.name);if(e.isDirectory())copy(s,d);else fs.copyFileSync(s,d);}}
 function files(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?files(path.join(dir,e.name)):[path.join(dir,e.name)]);}
 const summary={cases:{},limits:[],screenshotsReviewedByTest:false};

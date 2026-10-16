@@ -2,6 +2,8 @@
 
 `assets/report.css` 提供报告的基础样式，含部分案例专用选择器；它是可复用样式底盘，不是完整通用组件框架。`assets/components.css` 补充轻量图表与表格接线。
 
+表现语法见 [Visual Grammar](../foundation/visual-grammar.md)。可选 `assets/runtime/visual-grammar.js` 提供与数据渲染分离的标记适配；Pixel v2 仍使用现有风格状态，不要求复制 HTML，也不强制启用适配器。自定义图表不要同时由默认 `data-chart` renderer 接管。
+
 优先复用：`.wrap` 单一阅读轴、`.composition-hero/.hero-heading`、`.insight-panel/.insight-result/.insight-evidence`、`.section-heading`、`.chart-surface`、`.table-scroll`、原生 `details/summary/.disclosure` 与 `.nav/.design-controls`。它们与 Pattern 的关系应保留，具体内容、章节数量和图形可变。
 
 ## 三轴控制

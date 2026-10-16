@@ -1,4 +1,4 @@
-# Cadence · v0.1.1
+# Cadence · v0.2.0
 
 [![License: No Resale](https://img.shields.io/badge/License-No%20Resale-blue)](LICENSE)
 
@@ -54,7 +54,7 @@ python scripts/install_skill.py --skills-dir /chosen/skills
 - Typography：Modern Sans / Editorial / Humanist / Technical，或 Auto 使用主题推荐。
 - Expressive Style：关闭 / Pixel / Cel Shaded / Sunset Retro / Newspaper Editorial。
 
-默认 Classic + Auto + 风格关闭。三轴独立，手动字体不随主题或风格丢失；Sunset/Newspaper 只在 Auto 下推荐衬线标题，正文保持基础配置。四个 Style Pack 是**实验性**：已有单案例和本版迁移检查，不等于通用成熟或用户已经认可所有组合。
+默认 Classic + Auto + 风格关闭。三轴独立，手动字体不随主题或风格丢失；Sunset/Newspaper 只在 Auto 下推荐衬线标题，正文保持基础配置。Pixel v2 是首个 [Visual Grammar](foundation/visual-grammar.md) 实现，规则见 [Pixel Grammar](styles/expressive/pixel/grammar.md)。其余三个 Style Pack 继续 **Experimental**；有限场景验证不等于全部图形/设备兼容或用户已认可所有组合。
 
 通用控制接口见 [components](references/components.md)。URL 示例 `?theme=forest-minimal&type=humanist&style=cel`。不强制推荐组合，切换表现不得改变统计内容。
 
@@ -89,6 +89,8 @@ npm test
 ```
 
 `npm run test:execution` 运行小型执行机制测试；`npm test` 保留完整仓库维护回归，不是每生成一份报告都要运行的默认命令。v0.1.1 审计与结果见 [执行审计](docs/execution-audit.md) 和 [验证记录](docs/v0.1.1-validation.md)。
+
+`npm run test:grammar` 执行不写文件的视觉语法合约测试。开展实验时先确认独立工作区，再设置 `CADENCE_TEST_OUTPUT` 将验收输出定向到该工作区；实验 HTML、截图、数据和一次性记录不放入 Skill 仓库。报告依赖本 Skill 的可复用资产，Skill 不依赖评估工作区；独立 HTML 可用打包工具内嵌资源和许可。
 
 也可设置 `BROWSER_EXECUTABLE` 使用已有浏览器；可选 `NODE_PATH` 用于复用已装测试模块，路径由调用者提供，代码不含本机路径。Python 开发依赖在 `requirements-dev.txt`，其中 Pillow 仅用于拼图，PyYAML 用于外部 skill-creator 验证。
 
